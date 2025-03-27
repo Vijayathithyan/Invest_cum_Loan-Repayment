@@ -17,6 +17,16 @@ st.set_page_config(page_title="Investment & Loan Strategy Simulator", layout="ce
 st.title("📊 Investment-Cum-Loan Repayment Simulator")
 
 with st.form("input_form"):
+    # Calculate Monthly Savings Preview
+    monthly_salary_usd = gross_salary / 12
+    after_tax_usd = monthly_salary_usd * (1 - us_tax / 100)
+    monthly_savings_usd = after_tax_usd - expenses
+    monthly_savings_inr = monthly_savings_usd * fx_rate
+
+# Display it in the UI
+    st.markdown(f"**💰 Estimated Monthly Savings (INR): ₹{monthly_savings_inr:,.2f}**")
+
+
     st.subheader("User Profile & Inputs")
     st.markdown("### 💼 Salary & Expense Info")
     gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000, help="Your annual salary offer in USD")
