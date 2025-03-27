@@ -18,28 +18,29 @@ st.title("📊 Investment-Cum-Loan Repayment Simulator")
 
 with st.form("input_form"):
     st.subheader("User Profile & Inputs")
-    gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000)
-    us_tax = st.slider("US Tax Rate (%)", 10, 40, 25)
-    expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0)
+    st.markdown("### 💼 Salary & Expense Info")
+    gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000, help="Your annual salary offer in USD")
+    us_tax = st.slider("US Tax Rate (%)", 10, 40, 25, help="Approximate income tax deducted in the U.S.")
+    expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0, help="Monthly rent, food, transport, etc.")
 
     st.subheader("Loan Details")
-    loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000)
-    interest_rate = st.slider("Loan Interest Rate (%)", 5, 20, 11)
-    emi = st.number_input("Monthly EMI (INR)", value=27000)
-    moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6)
-    loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240])
+    loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000, help="Total loan amount borrowed from an Indian bank in Indian Rupees.")
+    interest_rate = st.slider("Loan Interest Rate (%)", 5, 20, 11, help="Annual interest rate charged by your bank on the education loan.")
+    emi = st.number_input("Monthly EMI (INR)", value=27000, help="Fixed monthly EMI (Equated Monthly Installment) that must be paid once the moratorium ends.")
+    moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6, help="Number of months after graduation before you need to start EMI payments.")
+    loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240], help="Total loan repayment period in months. Choose the actual term given by your lender.")
 
     st.subheader("Investment Details")
-    invest_rate = st.slider("Investment Return Rate (%)", 0, 20, 12)
-    tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15)
-    fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5)
+    invest_rate = st.slider("Investment Return Rate (%)", 0, 20, 12, help="Expected annual return rate from your investments in India (e.g., mutual funds, FDs).)
+    tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15, help="Indian tax rate on returns from investments. Used to calculate post-tax gains.")
+    fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5,  help="Current or assumed conversion rate from US Dollars to Indian Rupees.")
 
     st.subheader("Strategy")
-    strategy = st.selectbox("Select Strategy", ['A', 'B', 'C', 'D'])
-    invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60)
+    strategy = st.selectbox("Select Strategy", ['A', 'B', 'C', 'D'],  help="Choose a strategy: A = Aggressive Loan Repayment, B = Balanced, C = Invest-First then Balanced, D = Invest-First then Aggressive Repayment.")
+    invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60,  help="Portion of your monthly savings (in INR) to be allocated to investments. The rest goes to loan repayment.")
 
     st.subheader("Simulation Settings")
-    sim_years = st.slider("Number of Years to Simulate", 1, 30, 10)
+    sim_years = st.slider("Number of Years to Simulate", 1, 30, 10, help="How many years after graduation you want to simulate your financial plan.")
 
     submitted = st.form_submit_button("Run Simulation")
 
