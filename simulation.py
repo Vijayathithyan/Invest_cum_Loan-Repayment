@@ -1,77 +1,100 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-import io
+import streamlit as st
 
 class UserInput:
-    def __init__(self, initial_investment, monthly_contribution, loan_amount, loan_interest_rate, loan_term_years):
-        self.initial_investment = initial_investment
-        self.monthly_contribution = monthly_contribution
-        self.loan_amount = loan_amount
-        self.loan_interest_rate = loan_interest_rate / 100  # Convert percentage to decimal
-        self.loan_term_years = loan_term_years
+    def __init__(
+        self, gross_annual_salary_usd, us_tax_rate, monthly_expenses_usd,
+        loan_amount_inr, interest_rate_loan, emi_inr, moratorium_months,
+        loan_term_months, investment_rate_annual, indian_tax_rate,
+        usd_to_inr_rate, percent_to_invest, years_to_simulate, strategy_type
+    ):
+        self.gross_annual_salary_usd = gross_annual_salary_usd
+        self.us_tax_rate = us_tax_rate
+        self.monthly_expenses_usd = monthly_expenses_usd
+        self.loan_amount_inr = loan_amount_inr
+        self.interest_rate_loan = interest_rate_loan
+        self.emi_inr = emi_inr
+        self.moratorium_months = moratorium_months
+        self.loan_term_months = loan_term_months
+        self.investment_rate_annual = investment_rate_annual
+        self.indian_tax_rate = indian_tax_rate
+        self.usd_to_inr_rate = usd_to_inr_rate
+        self.percent_to_invest = percent_to_invest
+        self.years_to_simulate = years_to_simulate
+        self.strategy_type = strategy_type
 
 def run_simulation(user_input):
-    months = user_input.loan_term_years * 12
-    monthly_rate = user_input.loan_interest_rate / 12
+    months = user_input.years_to_simulate * 12
+    df = pd.DataFrame(columns=["Month", "Loan Balance", "Investment Balance", "Net Worth", "Investment Return"])
 
-    # Calculate monthly loan payment
-    if monthly_rate > 0:
-        monthly_payment = user_input.loan_amount * (monthly_rate * (1 + monthly_rate)**months) / ((1 + monthly_rate)**months - 1)
-    else:
-        monthly_payment = user_input.loan_amount / months if months > 0 else 0
-
-    # Initialize DataFrame to store results
-    df = pd.DataFrame(index=range(1, months + 1), columns=['Month', 'Investment Balance', 'Loan Balance', 'Net Worth'])
-    df['Month'] = df.index
-
-    investment_balance = user_input.initial_investment
-    loan_balance = user_input.loan_amount
+    loan_balance = user_input.loan_amount_inr
+    investment_balance = 0
+    monthly_loan_interest = user_input.interest_rate_loan / 12 / 100
+    monthly_investment_return = user_input.investment_rate_annual / 12 / 100
+    monthly_savings_usd = (user_input.gross_annual_salary_usd / 12) * (1 - user_input.us_tax_rate) - user_input.monthly_expenses_usd
+    monthly_savings_inr = monthly_savings_usd * user_input.usd_to_inr_rate
+    invest_ratio = user_input.percent_to_invest / 100
+    repay_ratio = 1 - invest_ratio
 
     for month in range(1, months + 1):
-        # Update loan balance
-        interest_payment = loan_balance * monthly_rate
-        principal_payment = monthly_payment - interest_payment
-        loan_balance -= principal_payment
+        loan_interest = loan_balance * monthly_loan_interest
+        loan_balance += loan_interest
 
-        # Update investment balance
-        investment_balance += user_input.monthly_contribution
-        investment_balance *= (1 + monthly_rate)  # Assuming investment grows at the same rate as loan interest
+        if month > user_input.moratorium_months:
+            loan_balance -= user_input.emi_inr
 
-        # Calculate net worth
-        net_worth = investment_balance - loan_balance
+        if user_input.strategy_type == 'A':
+            investment_contrib = 0
+            repay_extra = monthly_savings_inr
+        elif user_input.strategy_type == 'B':
+            investment_contrib = monthly_savings_inr * invest_ratio
+            repay_extra = monthly_savings_inr * repay_ratio
+        elif user_input.strategy_type == 'C':
+            if month <= user_input.moratorium_months:
+                investment_contrib = monthly_savings_inr
+                repay_extra = 0
+            else:
+                investment_contrib = monthly_savings_inr * invest_ratio
+                repay_extra = monthly_savings_inr * repay_ratio
+        elif user_input.strategy_type == 'D':
+            if month <= user_input.moratorium_months:
+                investment_contrib = monthly_savings_inr
+                repay_extra = 0
+            else:
+                investment_contrib = 0
+                repay_extra = monthly_savings_inr
+        else:
+            investment_contrib = 0
+            repay_extra = 0
 
-        # Store results
-        df.at[month, 'Investment Balance'] = investment_balance
-        df.at[month, 'Loan Balance'] = loan_balance
-        df.at[month, 'Net Worth'] = net_worth
+        loan_balance -= repay_extra
+        investment_balance += investment_contrib
+        returns = investment_balance * monthly_investment_return * (1 - user_input.indian_tax_rate / 100)
+        investment_balance += returns
+
+        df.loc[month] = [
+            month,
+            max(loan_balance, 0),
+            investment_balance,
+            investment_balance - max(loan_balance, 0),
+            returns
+        ]
 
     return df
 
-def plot_simulation_results(df):
-    plt.figure(figsize=(10, 6))
-    plt.plot(df['Month'], df['Investment Balance'], label='Investment Balance', color='blue')
-    plt.plot(df['Month'], df['Loan Balance'], label='Loan Balance', color='red')
-    plt.plot(df['Month'], df['Net Worth'], label='Net Worth', color='green')
-    plt.xlabel('Month')
-    plt.ylabel('Amount ($)')
-    plt.title('Investment and Loan Repayment Simulation')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
+def generate_summary(df, user_input):
+    final = df.iloc[-1]
+    breakeven_month = df[df["Net Worth"] > 0].first_valid_index()
+    roi_month = df[df["Investment Return"] >= user_input.emi_inr].first_valid_index()
 
-    # Save plot to a BytesIO object
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    plt.close()
-    return buf
+    st.write(f"📆 **Final Net Worth:** ₹{final['Net Worth']:,.0f}")
+    st.write(f"📉 **Final Loan Balance:** ₹{final['Loan Balance']:,.0f}")
+    st.write(f"📈 **Final Investment Balance:** ₹{final['Investment Balance']:,.0f}")
+    if breakeven_month:
+        st.write(f"✅ **Net worth turns positive in month {int(breakeven_month)}**")
+    if roi_month:
+        st.write(f"💸 **Investment returns start covering EMI from month {int(roi_month)}**")
 
-def generate_summary(df):
-    final_month = df.iloc[-1]
-    summary = {
-        'Final Investment Balance': final_month['Investment Balance'],
-        'Final Loan Balance': final_month['Loan Balance'],
-        'Final Net Worth': final_month['Net Worth']
-    }
-    return summary
+def plot_simulation_results(df, emi):
+    st.line_chart(df[["Loan Balance", "Investment Balance", "Net Worth"]])
