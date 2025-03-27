@@ -18,9 +18,9 @@ with st.form("debug_form_3"):
     st.markdown(f"**💰 Estimated Monthly Savings (INR): ₹{monthly_savings_inr:,.2f}**")
 
     st.subheader("🏦 Loan Details")
-
+    
     loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000)
-    interest_rate = st.slider("Loan Interest Rate (%)", 5, 20, 11)
+    interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f")
     emi = st.number_input("Monthly EMI (INR)", value=27000)
     moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6)
     loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240])
