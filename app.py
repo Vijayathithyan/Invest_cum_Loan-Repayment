@@ -1,8 +1,11 @@
 import streamlit as st
+import pandas as pd
+from simulation import UserInput, run_simulation, plot_simulation_results, generate_summary
 
-st.title("🧪 Debug Step 4: Investment + Strategy Inputs")
+st.set_page_config(page_title="Investment & Loan Strategy Simulator", layout="centered")
+st.title("📊 Investment-Cum-Loan Repayment Simulator")
 
-with st.form("debug_form_4"):
+with st.form("input_form"):
     st.subheader("💼 Salary & Expense Info")
 
     gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000)
@@ -35,6 +38,40 @@ with st.form("debug_form_4"):
     st.subheader("⚙️ Simulation Settings")
     sim_years = st.slider("Number of Years to Simulate", 1, 30, 10)
 
-    submitted = st.form_submit_button("Run Test")
-    if submitted:
-        st.success("✅ All input sections are working!")
+    submitted = st.form_submit_button("Run Simulation")
+
+if submitted:
+    # Create input object
+    user_input = UserInput(
+        gross_annual_salary_usd=gross_salary,
+        us_tax_rate=us_tax / 100,
+        monthly_expenses_usd=expenses,
+        loan_amount_inr=loan_amt,
+        interest_rate_loan=interest_rate,
+        emi_inr=emi,
+        moratorium_months=moratorium,
+        loan_term_months=loan_term,
+        investment_rate_annual=invest_rate,
+        indian_tax_rate=tax_rate,
+        usd_to_inr_rate=fx_rate,
+        percent_to_invest=invest_percent,
+        years_to_simulate=sim_years,
+        strategy_type=strategy
+    )
+
+    # Run simulation
+    df = run_simulation(user_input)
+
+    st.markdown("## 📈 Simulation Summary")
+    generate_summary(df, user_input)
+
+    st.markdown("## 📊 Visualization")
+    plot_simulation_results(df, user_input.emi_inr)
+
+    st.markdown("## 📥 Download Results")
+    csv = df.to_csv(index=False).encode('utf-8')
+    st.download_button("Download CSV", csv, "simulation_output.csv")
+
+    df.to_excel("simulation_output.xlsx", index=False)
+    with open("simulation_output.xlsx", "rb") as f:
+        st.download_button("Download Excel", f, "simulation_output.xlsx")
