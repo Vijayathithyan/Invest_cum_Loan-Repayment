@@ -193,8 +193,3 @@ def generate_summary(df, user_input):
     print(f\"💰 Final Investment Balance: ₹{final['Investment Balance']:.2f}\")
     print(f\"🏦 Remaining Loan Balance: ₹{final['Loan Balance']:.2f}\")
 """
-
-with open("simulation.py", "w") as file:
-    file.write(simulation_code)
-
-!ls
