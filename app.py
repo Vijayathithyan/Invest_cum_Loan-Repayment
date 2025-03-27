@@ -31,7 +31,23 @@ with st.form("input_form"):
     invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f")
     tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15)
 
-    st.subheader("🧪 Strategy")
+    st.subheader("🧪 Strategy Options")
+    st.markdown("""
+    ### 📘 Strategy Overview
+    
+    **🔴 Strategy A – Aggressive Repayment**  
+    Use 100% of savings to aggressively repay the loan. No investments until loan is cleared.
+    
+    **🟡 Strategy B – Balanced**  
+    Split your monthly savings between investments and loan repayment based on your chosen percentage.
+    
+    **🔵 Strategy C – Invest First, Then Balanced**  
+    During the moratorium period, invest all your savings. After that, split your savings between investments and repayment.
+    
+    **🟣 Strategy D – Invest First, Then Aggressive**  
+    Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
+    """)
+    
     strategy = st.selectbox("Select Strategy", ['A', 'B', 'C', 'D'])
     # 📝 Strategy description box
     strategy_descriptions = {
