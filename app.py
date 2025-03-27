@@ -41,7 +41,7 @@ with st.form("input_form"):
     'D': "🟣 **Invest First, Then Aggressive** – Invest during the moratorium, then aggressively repay the loan."
     }
 
-st.info(strategy_descriptions[strategy])
+    st.info(strategy_descriptions[strategy])
 
     
     invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60)
