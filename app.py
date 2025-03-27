@@ -87,8 +87,3 @@ if submitted:
     with open("simulation_output.xlsx", "rb") as f:
         st.download_button("Download Excel", f, "simulation_output.xlsx")
 """
-
-with open("app.py", "w") as file:
-    file.write(app_code)
-
-!ls
