@@ -18,38 +18,38 @@ with st.form("input_form"):
         expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0, help="Your monthly personal expenses while living in the US (excluding taxes).")
         fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5, help="Assumed currency conversion rate from USD to INR.")
 
-    st.subheader("🏦 Loan Details")
-    loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000, help="Total loan amount you borrowed in India, in INR.")
-    interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f", help="Annual interest rate charged by the bank on your loan.")
-    emi = st.number_input("Monthly EMI (INR)", value=27000, help="Minimum monthly loan payment (EMI) as per the bank schedule.")
-    moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6, help="Months after graduation during which you're not required to repay the loan.")
-    loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240], help="Total repayment period as per your loan agreement.")
+    with st.expander("🏦 Loan Details", expanded=True):
+        loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000, help="Total loan amount you borrowed in India, in INR.")
+        interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f", help="Annual interest rate charged by the bank on your loan.")
+        emi = st.number_input("Monthly EMI (INR)", value=27000, help="Minimum monthly loan payment (EMI) as per the bank schedule.")
+        moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6, help="Months after graduation during which you're not required to repay the loan.")
+        loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240], help="Total repayment period as per your loan agreement.")
 
-    st.subheader("📈 Investment Details")
-    invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f", help="Estimated annual return percentage on your investments.")
-    tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15, help="Tax rate in India applied to gains from your investments.")
+    with st.expander("📈 Investment Details", expanded=True):
+        invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f", help="Estimated annual return percentage on your investments.")
+        tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15, help="Tax rate in India applied to gains from your investments.")
 
-    st.subheader("🦪 Strategy Options")
-    st.markdown("""
-    ### 📘 Strategy Overview
+    with st.expander("🧪 Strategy Options", expanded=True):
+        st.markdown("""
+        ### 📘 Strategy Overview
+    
+        **🔴 Strategy A – Aggressive Repayment**  
+        Use 100% of savings to aggressively repay the loan. No investments until the loan is cleared.
+    
+        **🟡 Strategy B – Balanced**  
+        Split your monthly savings between investments and loan repayment based on your chosen percentage.
+    
+        **🔵 Strategy C – Invest First, Then Balanced**  
+        During the moratorium period, invest all your savings. After that, split your savings between investments and repayment.
+    
+        **🔹 Strategy D – Invest First, Then Aggressive**  
+        Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
+        """)
+        strategy = st.selectbox("Choose a Strategy", ['A', 'B', 'C', 'D'], index=1)
+        invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60, help="Out of your monthly savings, how much (%) you want to allocate to investments.")
 
-    **🔴 Strategy A – Aggressive Repayment**  
-    Use 100% of savings to aggressively repay the loan. No investments until the loan is cleared.
-
-    **🟡 Strategy B – Balanced**  
-    Split your monthly savings between investments and loan repayment based on your chosen percentage.
-
-    **🔵 Strategy C – Invest First, Then Balanced**  
-    During the moratorium period, invest all your savings. After that, split your savings between investments and repayment.
-
-    **🔹 Strategy D – Invest First, Then Aggressive**  
-    Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
-    """)
-    strategy = st.selectbox("Choose a Strategy", ['A', 'B', 'C', 'D'], index=1)
-    invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60, help="Out of your monthly savings, how much (%) you want to allocate to investments.")
-
-    st.subheader("⚙️ Simulation Settings")
-    sim_years = st.slider("Number of Years to Simulate", 1, 30, 10, help="Time horizon for the simulation in years after graduation.")
+    with st.expander("⚙️ Simulation Settings", expanded=True):
+        sim_years = st.slider("Number of Years to Simulate", 1, 30, 10, help="Time horizon for the simulation in years after graduation.")
 
     # Form submission
     submitted = st.form_submit_button("Review Your Inputs")
