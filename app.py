@@ -60,10 +60,10 @@ with st.form("input_form"):
     }
 
     st.info(strategy_descriptions[strategy])
-    invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60)
+    invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60, help="Out of your monthly savings, how much (%) you want to allocate to investments.")
 
     st.subheader("⚙️ Simulation Settings")
-    sim_years = st.slider("Number of Years to Simulate", 1, 30, 10)
+    sim_years = st.slider("Number of Years to Simulate", 1, 30, 10, help="Time horizon for the simulation in years after graduation.")
 
     submitted = st.form_submit_button("Run Simulation")
 
