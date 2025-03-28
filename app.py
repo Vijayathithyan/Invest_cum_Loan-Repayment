@@ -92,3 +92,4 @@ if st.session_state.form_submitted:
             monthly_expenses_usd=st.session_state.user_inputs["Monthly Living Expenses (USD)"],
             loan_amount_inr=st.session_state.user
 ::contentReference[oaicite:12]{index=12}
+        )
