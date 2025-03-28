@@ -21,15 +21,15 @@ with st.form("input_form"):
     st.markdown(f"**💰 Estimated Monthly Savings (INR): ₹{monthly_savings_inr:,.2f}**")
 
     st.subheader("🏦 Loan Details")
-    loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000)
-    interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f")
-    emi = st.number_input("Monthly EMI (INR)", value=27000)
-    moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6)
-    loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240])
+    loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000, help="Total loan amount you borrowed, in INR (or Home Currency).")
+    interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f",  help="Annual interest rate charged by the bank on your loan.")
+    emi = st.number_input("Monthly EMI (INR)", value=27000, help="Minimum monthly loan payment (EMI) as per the bank schedule.")
+    moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6, help="Months after graduation during which you're not required to repay the loan.")
+    loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240, 300], help="Total repayment period as per your loan agreement.")
 
     st.subheader("📈 Investment Details")
-    invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f")
-    tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15)
+    invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f", help="Estimated annual return percentage on your investments.")
+    tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15,  help="Tax rate in India applied to gains from your investments.")
 
     st.subheader("🧪 Strategy Options")
    
