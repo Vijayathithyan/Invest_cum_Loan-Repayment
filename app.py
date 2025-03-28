@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 from simulation import UserInput, run_simulation, plot_simulation_results, generate_summary
 
+if "preview_ready" not in st.session_state:
+    st.session_state.preview_ready = False
+
 st.set_page_config(page_title="Investment & Loan Strategy Simulator", layout="centered")
 st.title("📊 Investment-Cum-Loan Repayment Simulator")
 
