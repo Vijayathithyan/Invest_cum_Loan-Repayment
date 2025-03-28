@@ -65,7 +65,66 @@ with st.form("input_form"):
     st.subheader("⚙️ Simulation Settings")
     sim_years = st.slider("Number of Years to Simulate", 1, 30, 10, help="Time horizon for the simulation in years after graduation.")
 
-    submitted = st.form_submit_button("Run Simulation")
+    submitted = st.form_submit_button("Review and Simulate")
+
+    if submitted:
+        with st.expander("📋 Review Your Inputs Before Running Simulation", expanded=True):
+            st.markdown("### Salary & Expenses")
+            st.write(f"**Gross Annual Salary (USD):** ${gross_salary:,.0f}")
+            st.write(f"**US Tax Rate:** {us_tax}%")
+            st.write(f"**Monthly Expenses (USD):** ${expenses:,.0f}")
+            st.write(f"**USD to INR Rate:** ₹{fx_rate:.2f}")
+            st.markdown("---")
+    
+            st.markdown("### Loan Details")
+            st.write(f"**Loan Amount (INR):** ₹{loan_amt:,.0f}")
+            st.write(f"**Loan Interest Rate:** {interest_rate:.2f}%")
+            st.write(f"**Monthly EMI:** ₹{emi:,.0f}")
+            st.write(f"**Moratorium Period:** {moratorium} months")
+            st.write(f"**Loan Duration:** {loan_term} months")
+            st.markdown("---")
+    
+            st.markdown("### Investment Plan")
+            st.write(f"**Investment Return Rate:** {invest_rate:.2f}%")
+            st.write(f"**Indian Tax Rate on Returns:** {tax_rate}%")
+            st.write(f"**% of Savings to Invest:** {invest_percent}%")
+            st.markdown("---")
+    
+            st.markdown("### Strategy & Simulation")
+            st.write(f"**Selected Strategy:** {strategy}")
+            st.write(f"**Years to Simulate:** {sim_years}")
+            st.success("✅ All inputs loaded. Click below to start the simulation.")
+    
+            if st.button("Start Simulation"):
+                # Proceed to run simulation (your existing logic goes here)
+                user_input = UserInput(
+                    gross_annual_salary_usd=gross_salary,
+                    us_tax_rate=us_tax / 100,
+                    monthly_expenses_usd=expenses,
+                    loan_amount_inr=loan_amt,
+                    interest_rate_loan=interest_rate,
+                    emi_inr=emi,
+                    moratorium_months=moratorium,
+                    loan_term_months=loan_term,
+                    investment_rate_annual=invest_rate,
+                    indian_tax_rate=tax_rate,
+                    usd_to_inr_rate=fx_rate,
+                    percent_to_invest=invest_percent,
+                    years_to_simulate=sim_years,
+                    strategy_type=strategy
+                )
+    
+                df = run_simulation(user_input)
+                st.markdown("## 📈 Simulation Summary")
+                generate_summary(df, user_input)
+                st.markdown("## 📊 Visualization")
+                plot_simulation_results(df, user_input.emi_inr)
+                csv = df.to_csv(index=False).encode('utf-8')
+                st.download_button("Download CSV", csv, "simulation_output.csv")
+                df.to_excel("simulation_output.xlsx", index=False)
+                with open("simulation_output.xlsx", "rb") as f:
+                    st.download_button("Download Excel", f, "simulation_output.xlsx")
+
 
 if submitted:
     # Create input object
