@@ -8,10 +8,10 @@ st.title("📊 Investment-Cum-Loan Repayment Simulator")
 with st.form("input_form"):
     st.subheader("💼 Salary & Expense Info")
 
-    gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000)
-    us_tax = st.slider("US Tax Rate (%)", 10, 40, 25)
-    expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0)
-    fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5)
+    gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000, help="Your pre-tax yearly salary expected from your job in the US.")
+    us_tax = st.slider("US Tax Rate (%)", 10, 40, 25,  help="Estimated total tax rate (federal + state) applied to your US salary.")
+    expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0, help="Your monthly personal expenses while living in the US (excluding taxes).")
+    fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5, help="Assumed currency conversion rate from USD to INR.")
 
     monthly_salary_usd = gross_salary / 12
     after_tax_usd = monthly_salary_usd * (1 - us_tax / 100)
