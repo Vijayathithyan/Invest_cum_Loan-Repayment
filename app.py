@@ -119,16 +119,6 @@ if st.session_state.form_submitted:
         with open("simulation_output.xlsx", "rb") as f:
             st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
 
-st.markdown("---")
-st.header("📊 Compare Strategies")
-
-compare_choices = st.multiselect(
-    "Select strategies to compare",
-    options=['A', 'B', 'C', 'D'],
-    default=['A', 'B'],
-    help="Simulate multiple strategies using the same inputs and compare final outcomes."
-)
-
 if "user_inputs" in st.session_state:
     st.markdown("---")
     st.header("📊 Compare Strategies")
