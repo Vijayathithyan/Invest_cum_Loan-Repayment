@@ -36,65 +36,79 @@ def run_simulation(user_input):
     monthly_savings_inr = monthly_savings_usd * user_input.usd_to_inr_rate
     invest_ratio = user_input.percent_to_invest / 100
     repay_ratio = 1 - invest_ratio
+    loan_fully_repaid = False
 
     for month in range(1, months + 1):
+        # Accrue interest
         loan_interest = loan_balance * monthly_loan_interest
         loan_balance += loan_interest
 
-        if month > user_input.moratorium_months:
+        # Pay EMI if out of moratorium
+        if month > user_input.moratorium_months and not loan_fully_repaid:
             loan_balance -= user_input.emi_inr
 
+        # Decide strategy allocation
+        investment_contrib = 0
+        repay_extra = 0
+
         if user_input.strategy_type == 'A':
-            investment_contrib = 0
-            repay_extra = monthly_savings_inr
+            if not loan_fully_repaid:
+                repay_extra = monthly_savings_inr
+            else:
+                investment_contrib = monthly_savings_inr
+
         elif user_input.strategy_type == 'B':
             investment_contrib = monthly_savings_inr * invest_ratio
             repay_extra = monthly_savings_inr * repay_ratio
+
         elif user_input.strategy_type == 'C':
             if month <= user_input.moratorium_months:
                 investment_contrib = monthly_savings_inr
-                repay_extra = 0
             else:
                 investment_contrib = monthly_savings_inr * invest_ratio
                 repay_extra = monthly_savings_inr * repay_ratio
+
         elif user_input.strategy_type == 'D':
             if month <= user_input.moratorium_months:
                 investment_contrib = monthly_savings_inr
-                repay_extra = 0
             else:
-                investment_contrib = 0
                 repay_extra = monthly_savings_inr
-        else:
-            investment_contrib = 0
-            repay_extra = 0
 
-        loan_balance -= repay_extra
+        # Apply extra loan repayment if loan is still active
+        if not loan_fully_repaid:
+            loan_balance -= repay_extra
+            if loan_balance <= 0:
+                loan_balance = 0
+                loan_fully_repaid = True
+
+        # Add to investments
         investment_balance += investment_contrib
+
+        # Apply investment returns
         returns = investment_balance * monthly_investment_return * (1 - user_input.indian_tax_rate / 100)
         investment_balance += returns
 
-        df.loc[month] = [
-            month,
-            max(loan_balance, 0),
-            investment_balance,
-            investment_balance - max(loan_balance, 0),
-            returns
-        ]
+        net_worth = investment_balance - loan_balance
+
+        df.loc[month - 1] = [month, loan_balance, investment_balance, net_worth, returns]
 
     return df
 
+def plot_simulation_results(df, emi):
+    st.line_chart(df.set_index("Month")[["Net Worth", "Loan Balance", "Investment Balance"]])
+    break_even = df[df["Net Worth"] > 0].head(1)
+    coverage = df[df["Investment Return"] > emi].head(1)
+    if not break_even.empty:
+        st.success(f"💰 Break-even net worth occurs at month {int(break_even['Month'].values[0])}.")
+    if not coverage.empty:
+        st.success(f"📈 Investment returns start covering EMI at month {int(coverage['Month'].values[0])}.")
+
 def generate_summary(df, user_input):
     final = df.iloc[-1]
-    breakeven_month = df[df["Net Worth"] > 0].first_valid_index()
-    roi_month = df[df["Investment Return"] >= user_input.emi_inr].first_valid_index()
+    st.markdown(f"""
+        **Final Results after {user_input.years_to_simulate} years**:
 
-    st.write(f"📆 **Final Net Worth:** ₹{final['Net Worth']:,.0f}")
-    st.write(f"📉 **Final Loan Balance:** ₹{final['Loan Balance']:,.0f}")
-    st.write(f"📈 **Final Investment Balance:** ₹{final['Investment Balance']:,.0f}")
-    if breakeven_month:
-        st.write(f"✅ **Net worth turns positive in month {int(breakeven_month)}**")
-    if roi_month:
-        st.write(f"💸 **Investment returns start covering EMI from month {int(roi_month)}**")
-
-def plot_simulation_results(df, emi):
-    st.line_chart(df[["Loan Balance", "Investment Balance", "Net Worth"]])
+        - 📊 **Final Net Worth:** ₹{final['Net Worth']:,.0f}
+        - 💼 **Investment Balance:** ₹{final['Investment Balance']:,.0f}
+        - 🏦 **Loan Balance:** ₹{final['Loan Balance']:,.0f}
+    """)
