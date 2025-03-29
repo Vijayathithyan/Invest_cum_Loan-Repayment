@@ -129,52 +129,62 @@ compare_choices = st.multiselect(
     help="Simulate multiple strategies using the same inputs and compare final outcomes."
 )
 
-if compare_choices:
-    comparison_results = []
+if "user_inputs" in st.session_state:
+    st.markdown("---")
+    st.header("📊 Compare Strategies")
 
-    for strat in compare_choices:
-        user_input_cmp = UserInput(
-            gross_annual_salary_usd=st.session_state.user_inputs["Gross Annual Salary (USD)"],
-            us_tax_rate=st.session_state.user_inputs["US Tax Rate (%)"] / 100,
-            monthly_expenses_usd=st.session_state.user_inputs["Monthly Living Expenses (USD)"],
-            loan_amount_inr=st.session_state.user_inputs["Education Loan Amount (INR)"],
-            interest_rate_loan=st.session_state.user_inputs["Loan Interest Rate (%)"],
-            emi_inr=st.session_state.user_inputs["Monthly EMI (INR)"],
-            moratorium_months=st.session_state.user_inputs["Moratorium Period (Months)"],
-            loan_term_months=st.session_state.user_inputs["Loan Duration (Months)"],
-            investment_rate_annual=st.session_state.user_inputs["Investment Return Rate (%)"],
-            indian_tax_rate=st.session_state.user_inputs["Indian Tax Rate (%)"],
-            usd_to_inr_rate=st.session_state.user_inputs["USD to INR Conversion Rate"],
-            percent_to_invest=st.session_state.user_inputs["Percent of Savings to Invest (%)"],
-            years_to_simulate=st.session_state.user_inputs["Number of Years to Simulate"],
-            strategy_type=strat
-        )
+    compare_choices = st.multiselect(
+        "Select strategies to compare",
+        options=['A', 'B', 'C', 'D'],
+        default=['A', 'B'],
+        help="Simulate multiple strategies using the same inputs and compare final outcomes."
+    )
 
-        df_cmp = run_simulation(user_input_cmp)
-        final = df_cmp.iloc[-1]
-        comparison_results.append({
-            "Strategy": strat,
-            "Net Worth (₹)": final["Net Worth"],
-            "Investment (₹)": final["Investment Balance"],
-            "Loan Balance (₹)": final["Loan Balance"]
-        })
+    if compare_choices:
+        comparison_results = []
 
-        st.markdown(f"""
-        #### Strategy {strat}
-        - Final Net Worth: ₹{final['Net Worth']:,.0f}
-        - Final Investment Balance: ₹{final['Investment Balance']:,.0f}
-        - Final Loan Balance: ₹{final['Loan Balance']:,.0f}
-        """)
+        for strat in compare_choices:
+            user_input_cmp = UserInput(
+                gross_annual_salary_usd=st.session_state.user_inputs["Gross Annual Salary (USD)"],
+                us_tax_rate=st.session_state.user_inputs["US Tax Rate (%)"] / 100,
+                monthly_expenses_usd=st.session_state.user_inputs["Monthly Living Expenses (USD)"],
+                loan_amount_inr=st.session_state.user_inputs["Education Loan Amount (INR)"],
+                interest_rate_loan=st.session_state.user_inputs["Loan Interest Rate (%)"],
+                emi_inr=st.session_state.user_inputs["Monthly EMI (INR)"],
+                moratorium_months=st.session_state.user_inputs["Moratorium Period (Months)"],
+                loan_term_months=st.session_state.user_inputs["Loan Duration (Months)"],
+                investment_rate_annual=st.session_state.user_inputs["Investment Return Rate (%)"],
+                indian_tax_rate=st.session_state.user_inputs["Indian Tax Rate (%)"],
+                usd_to_inr_rate=st.session_state.user_inputs["USD to INR Conversion Rate"],
+                percent_to_invest=st.session_state.user_inputs["Percent of Savings to Invest (%)"],
+                years_to_simulate=st.session_state.user_inputs["Number of Years to Simulate"],
+                strategy_type=strat
+            )
 
-    # Convert to DataFrame and plot
-    cmp_df = pd.DataFrame(comparison_results).set_index("Strategy")
+            df_cmp = run_simulation(user_input_cmp)
+            final = df_cmp.iloc[-1]
+            comparison_results.append({
+                "Strategy": strat,
+                "Net Worth (₹)": final["Net Worth"],
+                "Investment (₹)": final["Investment Balance"],
+                "Loan Balance (₹)": final["Loan Balance"]
+            })
 
-    st.subheader("📈 Final Net Worth Comparison")
-    st.bar_chart(cmp_df["Net Worth (₹)"])
+            st.markdown(f"""
+            #### Strategy {strat}
+            - Final Net Worth: ₹{final['Net Worth']:,.0f}
+            - Final Investment Balance: ₹{final['Investment Balance']:,.0f}
+            - Final Loan Balance: ₹{final['Loan Balance']:,.0f}
+            """)
 
-    st.subheader("📉 Loan Balance Comparison")
-    st.bar_chart(cmp_df["Loan Balance (₹)"])
+        # Convert to DataFrame and plot
+        cmp_df = pd.DataFrame(comparison_results).set_index("Strategy")
 
-    st.subheader("📊 Investment Balance Comparison")
-    st.bar_chart(cmp_df["Investment (₹)"])
+        st.subheader("📈 Final Net Worth Comparison")
+        st.bar_chart(cmp_df["Net Worth (₹)"])
 
+        st.subheader("📉 Loan Balance Comparison")
+        st.bar_chart(cmp_df["Loan Balance (₹)"])
+
+        st.subheader("📊 Investment Balance Comparison")
+        st.bar_chart(cmp_df["Investment (₹)"])
