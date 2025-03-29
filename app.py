@@ -11,7 +11,6 @@ if 'form_submitted' not in st.session_state:
 
 # Define the form
 with st.form("input_form"):
-    
     with st.expander("💼 Salary & Expense Info", expanded=True):
         gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000, help="Your pre-tax yearly salary expected from your job in the US.")
         us_tax = st.slider("US Tax Rate (%)", 10, 40, 25, help="Estimated total tax rate (federal + state) applied to your US salary.")
@@ -30,19 +29,18 @@ with st.form("input_form"):
         tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15, help="Tax rate in India applied to gains from your investments.")
 
     with st.expander("🧪 Strategy Options", expanded=True):
+        st.markdown("### 📘 Strategy Overview")
         st.markdown("""
-        ### 📘 Strategy Overview
-    
         **🔴 Strategy A – Aggressive Repayment**  
         Use 100% of savings to aggressively repay the loan. No investments until the loan is cleared.
-    
+
         **🟡 Strategy B – Balanced**  
         Split your monthly savings between investments and loan repayment based on your chosen percentage.
-    
+
         **🔵 Strategy C – Invest First, Then Balanced**  
         During the moratorium period, invest all your savings. After that, split your savings between investments and repayment.
-    
-        **🔹 Strategy D – Invest First, Then Aggressive**  
+
+        **🟣 Strategy D – Invest First, Then Aggressive**  
         Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
         """)
         strategy = st.selectbox("Choose a Strategy", ['A', 'B', 'C', 'D'], index=1)
@@ -75,7 +73,7 @@ with st.form("input_form"):
 
 # After form submission, provide download option and simulation
 if st.session_state.form_submitted:
-    st.subheader("📅 Download Your Input Data")
+    st.subheader("📥 Download Your Input Data")
     input_data = pd.DataFrame([st.session_state.user_inputs])
     csv_data = input_data.to_csv(index=False).encode('utf-8')
     st.download_button(
@@ -118,64 +116,3 @@ if st.session_state.form_submitted:
         df.to_excel("simulation_output.xlsx", index=False)
         with open("simulation_output.xlsx", "rb") as f:
             st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
-
-if "user_inputs" in st.session_state:
-    st.markdown("---")
-    st.header("📊 Compare Strategies")
-
-    compare_choices = st.multiselect(
-        "Select strategies to compare",
-        options=['A', 'B', 'C', 'D'],
-        default=['A', 'B'],
-        key="strategy_comparison_select",
-        help="Simulate multiple strategies using the same inputs and compare final outcomes."
-    )
-
-    if compare_choices:
-        comparison_results = []
-
-        for strat in compare_choices:
-            user_input_cmp = UserInput(
-                gross_annual_salary_usd=st.session_state.user_inputs["Gross Annual Salary (USD)"],
-                us_tax_rate=st.session_state.user_inputs["US Tax Rate (%)"] / 100,
-                monthly_expenses_usd=st.session_state.user_inputs["Monthly Living Expenses (USD)"],
-                loan_amount_inr=st.session_state.user_inputs["Education Loan Amount (INR)"],
-                interest_rate_loan=st.session_state.user_inputs["Loan Interest Rate (%)"],
-                emi_inr=st.session_state.user_inputs["Monthly EMI (INR)"],
-                moratorium_months=st.session_state.user_inputs["Moratorium Period (Months)"],
-                loan_term_months=st.session_state.user_inputs["Loan Duration (Months)"],
-                investment_rate_annual=st.session_state.user_inputs["Investment Return Rate (%)"],
-                indian_tax_rate=st.session_state.user_inputs["Indian Tax Rate (%)"],
-                usd_to_inr_rate=st.session_state.user_inputs["USD to INR Conversion Rate"],
-                percent_to_invest=st.session_state.user_inputs["Percent of Savings to Invest (%)"],
-                years_to_simulate=st.session_state.user_inputs["Number of Years to Simulate"],
-                strategy_type=strat
-            )
-
-            df_cmp = run_simulation(user_input_cmp)
-            final = df_cmp.iloc[-1]
-            comparison_results.append({
-                "Strategy": strat,
-                "Net Worth (₹)": final["Net Worth"],
-                "Investment (₹)": final["Investment Balance"],
-                "Loan Balance (₹)": final["Loan Balance"]
-            })
-
-            st.markdown(f"""
-            #### Strategy {strat}
-            - Final Net Worth: ₹{final['Net Worth']:,.0f}
-            - Final Investment Balance: ₹{final['Investment Balance']:,.0f}
-            - Final Loan Balance: ₹{final['Loan Balance']:,.0f}
-            """)
-
-        # Convert to DataFrame and plot
-        cmp_df = pd.DataFrame(comparison_results).set_index("Strategy")
-
-        st.subheader("📈 Final Net Worth Comparison")
-        st.bar_chart(cmp_df["Net Worth (₹)"])
-
-        st.subheader("📉 Loan Balance Comparison")
-        st.bar_chart(cmp_df["Loan Balance (₹)"])
-
-        st.subheader("📊 Investment Balance Comparison")
-        st.bar_chart(cmp_df["Investment (₹)"])
