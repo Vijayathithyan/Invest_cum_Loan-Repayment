@@ -137,6 +137,7 @@ if "user_inputs" in st.session_state:
         "Select strategies to compare",
         options=['A', 'B', 'C', 'D'],
         default=['A', 'B'],
+        key="strategy_comparison_select",
         help="Simulate multiple strategies using the same inputs and compare final outcomes."
     )
 
