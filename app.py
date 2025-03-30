@@ -117,18 +117,18 @@ if st.session_state.form_submitted:
         with open("simulation_output.xlsx", "rb") as f:
             st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
 
-# --- Save Simulation Run to History ---
-if "history" not in st.session_state:
-    st.session_state.history = []
+  # ✅ Save Simulation Run to History (place here!)
+    if "history" not in st.session_state:
+        st.session_state.history = []
 
-st.session_state.history.append({
-    "Strategy": user_input.strategy_type,
-    "Years Simulated": user_input.years_to_simulate,
-    "% Invest": user_input.percent_to_invest,
-    "Final Net Worth": df.iloc[-1]["Net Worth"],
-    "Investment Balance": df.iloc[-1]["Investment Balance"],
-    "Loan Balance": df.iloc[-1]["Loan Balance"]
-})
+    st.session_state.history.append({
+        "Strategy": user_input.strategy_type,
+        "Years Simulated": user_input.years_to_simulate,
+        "% Invest": user_input.percent_to_invest,
+        "Final Net Worth": df.iloc[-1]["Net Worth"],
+        "Investment Balance": df.iloc[-1]["Investment Balance"],
+        "Loan Balance": df.iloc[-1]["Loan Balance"]
+    })
 
 st.markdown("---")
 st.header("🧠 Optimize Your Investment Strategy")
