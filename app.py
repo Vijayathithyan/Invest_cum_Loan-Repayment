@@ -17,7 +17,7 @@ with st.sidebar:
 
     ---
     """)
-    st.markdown("👤 **Built by:** Vijay Athithyan")
+    st.markdown("👤 **Built by:** Vijayathithyan B B")
     st.markdown("[🌐 Visit GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)")
     st.markdown("[🌐 Visit LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BQXC4bhQvSaWUOuVFIaxYkA%3D%3D)")
 
