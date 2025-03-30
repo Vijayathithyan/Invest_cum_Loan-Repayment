@@ -5,6 +5,23 @@ from simulation import UserInput, run_simulation, plot_simulation_results, gener
 st.set_page_config(page_title="Investment & Loan Strategy Simulator", layout="centered")
 st.title("💸 Investment-Cum-Loan Repayment Simulator")
 
+# --- Sidebar Setup ---
+with st.sidebar:
+    st.title("📊 Strategy Simulator")
+    st.markdown("""
+    This tool helps international students simulate and compare strategies for:
+    - Repaying student loans 💸
+    - Investing monthly savings 📈
+    - Maximizing net worth 💰
+
+    Choose a strategy, enter your assumptions, and simulate outcomes over time.
+
+    ---
+    """)
+    st.markdown("👤 **Built by:** Vijay Athithyan")
+    st.markdown("[🌐 Visit GitHub Repo](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)")
+
+
 # Initialize session state for form submission
 if 'form_submitted' not in st.session_state:
     st.session_state.form_submitted = False
