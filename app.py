@@ -153,6 +153,6 @@ if st.button("🔍 Optimize % to Invest"):
     st.success(f"💡 Best % to Invest: **{best_pct}%** — Final Net Worth: ₹{best_value:,.0f}")
     st.line_chart(opt_df.set_index("% Invest"))
 
-    csv = opt_df.to_csv(index=False).encode(\"utf-8\")
+    csv = opt_df.to_csv(index=False).encode("utf-8")
     st.download_button(\"Download Optimization Results (CSV)\", csv, \"optimization_output.csv\")
 
