@@ -116,3 +116,43 @@ if st.session_state.form_submitted:
         df.to_excel("simulation_output.xlsx", index=False)
         with open("simulation_output.xlsx", "rb") as f:
             st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
+        st.markdown("---")
+st.header("🧠 Optimize Your Investment Strategy")
+
+if st.button("🔍 Optimize % to Invest"):
+    optimize_results = []
+
+    for pct in range(0, 105, 5):  # 0 to 100 by 5%
+        test_input = UserInput(
+            gross_annual_salary_usd=st.session_state.user_inputs["Gross Annual Salary (USD)"],
+            us_tax_rate=st.session_state.user_inputs["US Tax Rate (%)"] / 100,
+            monthly_expenses_usd=st.session_state.user_inputs["Monthly Living Expenses (USD)"],
+            loan_amount_inr=st.session_state.user_inputs["Education Loan Amount (INR)"],
+            interest_rate_loan=st.session_state.user_inputs["Loan Interest Rate (%)"],
+            emi_inr=st.session_state.user_inputs["Monthly EMI (INR)"],
+            moratorium_months=st.session_state.user_inputs["Moratorium Period (Months)"],
+            loan_term_months=st.session_state.user_inputs["Loan Duration (Months)"],
+            investment_rate_annual=st.session_state.user_inputs["Investment Return Rate (%)"],
+            indian_tax_rate=st.session_state.user_inputs["Indian Tax Rate (%)"],
+            usd_to_inr_rate=st.session_state.user_inputs["USD to INR Conversion Rate"],
+            percent_to_invest=pct,
+            years_to_simulate=st.session_state.user_inputs["Number of Years to Simulate"],
+            strategy_type=st.session_state.user_inputs["Chosen Strategy"]
+        )
+
+        df_opt = run_simulation(test_input)
+        final_net_worth = df_opt.iloc[-1]["Net Worth"]
+        optimize_results.append({"% Invest": pct, "Net Worth": final_net_worth})
+
+    opt_df = pd.DataFrame(optimize_results)
+
+    best_row = opt_df.loc[opt_df["Net Worth"].idxmax()]
+    best_pct = best_row["% Invest"]
+    best_value = best_row["Net Worth"]
+
+    st.success(f"💡 Best % to Invest: **{best_pct}%** — Final Net Worth: ₹{best_value:,.0f}")
+    st.line_chart(opt_df.set_index(\"% Invest\"))
+
+    csv = opt_df.to_csv(index=False).encode(\"utf-8\")
+    st.download_button(\"Download Optimization Results (CSV)\", csv, \"optimization_output.csv\")
+
