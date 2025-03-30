@@ -12,9 +12,22 @@ with st.sidebar:
     This tool helps international students simulate and compare strategies for:
     - Repaying student loans 💸
     - Investing monthly savings 📈
+    - Investing commencement time 📅 
     - Maximizing net worth 💰
 
     Choose a strategy, enter your assumptions, and simulate outcomes over time.
+
+        **🔴 Strategy A – Aggressive Repayment**  
+        Use 100% of savings to aggressively repay the loan. No investments until the loan is cleared.
+
+        **🟡 Strategy B – Balanced**  
+        Split your monthly savings between investments and loan repayment based on your chosen percentage.
+
+        **🔵 Strategy C – Invest First, Then Balanced**  
+        During the moratorium period, invest all your savings. After that, split your savings between investments and repayment.
+
+        **🟣 Strategy D – Invest First, Then Aggressive**  
+        Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
 
     ---
     """)
