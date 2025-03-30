@@ -7,7 +7,7 @@ st.title("💸 Investment-Cum-Loan Repayment Simulator")
 
 # --- Sidebar Setup ---
 with st.sidebar:
-    st.title("📊 Strategy Simulator")
+    st.title("📊 Investment-Cum-Loan Repayment Strategy Simulator")
     st.markdown("""
     This tool helps international students simulate and compare strategies for:
     - Repaying student loans 💸
@@ -19,7 +19,8 @@ with st.sidebar:
     ---
     """)
     st.markdown("👤 **Built by:** Vijay Athithyan")
-    st.markdown("[🌐 Visit GitHub Repo](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)")
+    st.markdown("[🌐 Visit GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)")
+    st.markdown("[🌐 Visit LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BKcWi07NQRG6Oz2TaQyJxug%3D%3D)")
 
 
 # Initialize session state for form submission
