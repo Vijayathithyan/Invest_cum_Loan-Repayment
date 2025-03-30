@@ -116,7 +116,19 @@ if st.session_state.form_submitted:
         df.to_excel("simulation_output.xlsx", index=False)
         with open("simulation_output.xlsx", "rb") as f:
             st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
-        
+
+# --- Save Simulation Run to History ---
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+st.session_state.history.append({
+    "Strategy": user_input.strategy_type,
+    "Years Simulated": user_input.years_to_simulate,
+    "% Invest": user_input.percent_to_invest,
+    "Final Net Worth": df.iloc[-1]["Net Worth"],
+    "Investment Balance": df.iloc[-1]["Investment Balance"],
+    "Loan Balance": df.iloc[-1]["Loan Balance"]
+})
 
 st.markdown("---")
 st.header("🧠 Optimize Your Investment Strategy")
@@ -155,5 +167,17 @@ if st.button("🔍 Optimize % to Invest"):
     st.success(f"💡 Best % to Invest: **{best_pct}%** — Final Net Worth: ₹{best_value:,.0f}")
     st.line_chart(opt_df.set_index("% Invest"))
 
-    csv = opt_df.to_csv(index=False).encode("utf-8")
-    st.download_button("Download Optimization Results (CSV)", csv, "optimization_output.csv")
+# --- Simulation History View ---
+if "history" in st.session_state and st.session_state.history:
+    st.markdown("---")
+    st.header("📜 Simulation History")
+
+    hist_df = pd.DataFrame(st.session_state.history)
+    st.dataframe(hist_df)
+
+    csv_hist = hist_df.to_csv(index=False).encode("utf-8")
+    st.download_button("📥 Download History (CSV)", csv_hist, "simulation_history.csv")
+
+    hist_df.to_excel("simulation_history.xlsx", index=False)
+    with open("simulation_history.xlsx", "rb") as f:
+        st.download_button("📥 Download History (Excel)", f, "simulation_history.xlsx")
