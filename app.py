@@ -116,7 +116,9 @@ if st.session_state.form_submitted:
         df.to_excel("simulation_output.xlsx", index=False)
         with open("simulation_output.xlsx", "rb") as f:
             st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
-        st.markdown("---")
+        
+
+st.markdown("---")
 st.header("🧠 Optimize Your Investment Strategy")
 
 if st.button("🔍 Optimize % to Invest"):
@@ -154,5 +156,4 @@ if st.button("🔍 Optimize % to Invest"):
     st.line_chart(opt_df.set_index("% Invest"))
 
     csv = opt_df.to_csv(index=False).encode("utf-8")
-    st.download_button(\"Download Optimization Results (CSV)\", csv, \"optimization_output.csv\")
-
+    st.download_button("Download Optimization Results (CSV)", csv, "optimization_output.csv")
