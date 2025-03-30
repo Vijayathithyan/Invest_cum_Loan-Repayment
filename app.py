@@ -1,6 +1,68 @@
+import streamlit as st
+import pandas as pd
+from simulation import UserInput, run_simulation, plot_simulation_results, generate_summary
+
+st.set_page_config(page_title="Investment & Loan Strategy Simulator", layout="centered")
+
+# --- Sidebar Setup ---
+with st.sidebar:
+    st.title("📊 Strategy Simulator")
+    st.markdown("""
+    This tool helps international students simulate and compare strategies for:
+    - Repaying student loans 💸
+    - Investing monthly savings 📈
+    - Maximizing net worth 💰
+
+    Choose a strategy, enter your assumptions, and simulate outcomes over time.
+
+    ---
+    """)
+    st.markdown("👤 **Built by:** Vijay Athithyan")
+    st.markdown("[🌐 Visit GitHub Repo](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)")
+
+st.title("💸 Investment-Cum-Loan Repayment Simulator")
+
+if "form_submitted" not in st.session_state:
+    st.session_state.form_submitted = False
+
+with st.form("input_form"):
+    with st.expander("💼 Salary & Expense Info", expanded=True):
+        gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000)
+        us_tax = st.slider("US Tax Rate (%)", 10, 40, 25)
+        expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0)
+        fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5)
+
+    with st.expander("🏦 Loan Details", expanded=True):
+        loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000)
+        interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f")
+        emi = st.number_input("Monthly EMI (INR)", value=27000)
+        moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6)
+        loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240])
+
+    with st.expander("📈 Investment Details", expanded=True):
+        invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f")
+        tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15)
+
+    with st.expander("🧪 Strategy Options", expanded=True):
+        st.markdown("### 📘 Strategy Overview")
+        st.markdown("""
+        **🔴 Strategy A – Aggressive Repayment**  
+        Use 100% of savings to aggressively repay the loan. No investments until the loan is cleared.
+
+        **🟡 Strategy B – Balanced**  
+        Split your monthly savings between investments and loan repayment based on your chosen percentage.
+
+        **🔵 Strategy C – Invest First, Then Balanced**  
+        During the moratorium period, invest all your savings. After that, split your savings between investments and repayment.
+
+        **🟣 Strategy D – Invest First, Then Aggressive**  
+        Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
+        """)
+        strategy = st.selectbox("Choose a Strategy", ['A', 'B', 'C', 'D'], index=1)
+        invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60)
+
     with st.expander("⚙️ Simulation Settings", expanded=True):
-        sim_years = st.slider("Number of Years to Simulate", 1, 30, 10,
-                              help="Time horizon for the simulation in years after graduation.")
+        sim_years = st.slider("Number of Years to Simulate", 1, 30, 10)
 
     submitted = st.form_submit_button("Review Your Inputs")
     if submitted:
@@ -73,7 +135,6 @@ if st.session_state.form_submitted:
             "Loan Balance": df.iloc[-1]["Loan Balance"]
         })
 
-# --- Simulation History ---
 if "history" in st.session_state and st.session_state.history:
     st.markdown("---")
     st.header("📜 Simulation History")
@@ -88,7 +149,6 @@ if "history" in st.session_state and st.session_state.history:
     with open("simulation_history.xlsx", "rb") as f:
         st.download_button("📥 Download History (Excel)", f, "simulation_history.xlsx")
 
-# --- Optimization Section ---
 st.markdown("---")
 st.header("🧠 Optimize Your Investment Strategy")
 
