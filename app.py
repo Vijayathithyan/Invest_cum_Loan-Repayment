@@ -171,5 +171,5 @@ st.download_button("Download Simulation Output (CSV)", csv, "simulation_output.c
 
 df.to_excel("simulation_output.xlsx", index=False)
 with open("simulation_output.xlsx", "rb") as f:
-st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
+    st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
 
