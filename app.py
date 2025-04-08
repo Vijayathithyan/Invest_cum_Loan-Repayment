@@ -7,7 +7,7 @@ st.set_page_config(page_title="Investment & Loan Strategy Simulator", layout="ce
 
 # --- Sidebar Setup ---
 with st.sidebar:
-    st.title("📊 Strategy Simulator")
+    st.title("📊 Investment & Loan Strategy Simulator")
     st.markdown("""
     This tool helps international students simulate and compare strategies for:
     - Repaying student loans 💸
