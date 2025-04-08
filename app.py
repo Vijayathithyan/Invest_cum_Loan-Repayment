@@ -139,6 +139,14 @@ if st.button("🚀 Start Simulation"):
     st.markdown("## 📊 Visualization")
     plot_simulation_results(df, user_input.emi_inr)
 
+    csv = df.to_csv(index=False).encode("utf-8")
+    st.download_button("Download Simulation Output (CSV)", csv, "simulation_output.csv")
+
+    df.to_excel("simulation_output.xlsx", index=False)
+    with open("simulation_output.xlsx", "rb") as f:
+        st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
+
+
 
 from simulation import optimize_investment, SIM_HISTORY
 
@@ -165,11 +173,3 @@ if st.sidebar.button("📈 Optimize % to Invest"):
 if len(SIM_HISTORY) > 0:
     st.subheader("📜 Simulation History")
     st.dataframe(pd.DataFrame(SIM_HISTORY))
-
-csv = df.to_csv(index=False).encode("utf-8")
-st.download_button("Download Simulation Output (CSV)", csv, "simulation_output.csv")
-
-df.to_excel("simulation_output.xlsx", index=False)
-with open("simulation_output.xlsx", "rb") as f:
-    st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
-
