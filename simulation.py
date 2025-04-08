@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import altair as alt
 
 class UserInput:
     def __init__(self, gross_annual_salary_usd, us_tax_rate, monthly_expenses_usd, 
@@ -146,19 +147,21 @@ def run_simulation_with_jobloss(user_input, jobloss_prob_annual):
     return df
 
 def plot_simulation_results(df, emi):
-    import matplotlib.pyplot as plt
-    import streamlit as st
+    df_long = df.melt(id_vars='Month', value_vars=['Loan Balance', 'Investment Balance', 'Net Worth'],
+                      var_name='Metric', value_name='Amount')
 
-    fig, ax = plt.subplots()
-    ax.plot(df["Month"], df["Loan Balance"], label="Loan Balance")
-    ax.plot(df["Month"], df["Investment Balance"], label="Investment Balance")
-    ax.plot(df["Month"], df["Net Worth"], label="Net Worth")
-    ax.axhline(0, color='black', linewidth=0.5, linestyle='--')
-    ax.set_xlabel("Month")
-    ax.set_ylabel("Amount (INR)")
-    ax.set_title("Simulation Results")
-    ax.legend()
-    st.pyplot(fig)
+    chart = alt.Chart(df_long).mark_line().encode(
+        x=alt.X('Month', title='Month'),
+        y=alt.Y('Amount', title='Amount (INR)'),
+        color='Metric',
+        tooltip=['Month', 'Metric', 'Amount']
+    ).properties(
+        title='📊 Loan, Investment & Net Worth Over Time',
+        width=700,
+        height=400
+    ).interactive()
+
+    st.altair_chart(chart, use_container_width=True)
 
 def generate_summary(df, user_input):
     final_row = df.iloc[-1]
