@@ -1,4 +1,5 @@
 import pandas as pd
+import streamlit as st
 
 class UserInput:
     def __init__(self, gross_annual_salary_usd, us_tax_rate, monthly_expenses_usd, 
