@@ -58,7 +58,7 @@ with st.form("user_inputs"):
             "Years to Simulate": years,
             "Strategy": strategy
         }
-        st.session_state.user_inputs = user_inputs
+        st.session_state["user_inputs"] = user_inputs
         st.success("Inputs recorded. Now start the simulation below!")
 
 # --- MAIN SIMULATION ---
