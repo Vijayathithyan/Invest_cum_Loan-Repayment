@@ -139,9 +139,37 @@ if st.button("🚀 Start Simulation"):
     st.markdown("## 📊 Visualization")
     plot_simulation_results(df, user_input.emi_inr)
 
-    csv = df.to_csv(index=False).encode("utf-8")
-    st.download_button("Download Simulation Output (CSV)", csv, "simulation_output.csv")
 
-    df.to_excel("simulation_output.xlsx", index=False)
-    with open("simulation_output.xlsx", "rb") as f:
-        st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
+from simulation import optimize_investment, SIM_HISTORY
+
+# --- OPTIMIZATION MODULE ---
+if st.sidebar.button("📈 Optimize % to Invest"):
+    st.subheader("💡 Optimization Results")
+    if "user_inputs" in st.session_state:
+        test_input = st.session_state.user_inputs
+        opt_df = optimize_investment(test_input)
+        chart = alt.Chart(opt_df).mark_line(point=True).encode(
+            x=alt.X('% Invest'),
+            y=alt.Y('Final Net Worth'),
+            tooltip=['% Invest', 'Final Net Worth']
+        ).properties(
+            title='Final Net Worth vs % of Savings Invested',
+            width=700, height=400
+        ).interactive()
+        st.altair_chart(chart, use_container_width=True)
+        st.download_button("Download Optimization Results (CSV)", opt_df.to_csv(index=False), "optimization_output.csv")
+    else:
+        st.warning("Please enter your input data first by starting a simulation.")
+
+# --- SIMULATION HISTORY ---
+if len(SIM_HISTORY) > 0:
+    st.subheader("📜 Simulation History")
+    st.dataframe(pd.DataFrame(SIM_HISTORY))
+
+csv = df.to_csv(index=False).encode("utf-8")
+st.download_button("Download Simulation Output (CSV)", csv, "simulation_output.csv")
+
+df.to_excel("simulation_output.xlsx", index=False)
+with open("simulation_output.xlsx", "rb") as f:
+st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
+
