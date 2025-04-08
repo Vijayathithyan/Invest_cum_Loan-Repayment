@@ -29,9 +29,9 @@ if "form_submitted" not in st.session_state:
 with st.form("input_form"):
     with st.expander("💼 Salary & Expense Info", expanded=True):
         gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000, help="Your annual pre-tax salary in the United States.")
-        us_tax = st.slider("US Tax Rate (%)", 10, 40, 25)
-        expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0)
-        fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5)
+        us_tax = st.slider("US Tax Rate (%)", 10, 40, 25, help="Estimated combined federal and state tax rate.")
+        expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0, help="Your monthly non-tax expenses (e.g. rent, food, travel).")
+        fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5, help="Assumed conversion rate from USD to INR (e.g. 1 USD = 83.5 INR).")
 
     with st.expander("🏦 Loan Details", expanded=True):
         loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000)
