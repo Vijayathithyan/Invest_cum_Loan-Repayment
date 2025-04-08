@@ -41,8 +41,8 @@ with st.form("input_form"):
         loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240], help="Your total loan repayment period in months.")
 
     with st.expander("📈 Investment Details", expanded=True):
-        invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f")
-        tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15)
+        invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f",  help="Expected annual percentage return on your investments.")
+        tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15, help="Indian tax rate applicable to investment gains.")
 
     with st.expander("🧪 Strategy Options", expanded=True):
         st.markdown("### 📘 Strategy Overview")
