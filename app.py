@@ -59,8 +59,8 @@ with st.form("input_form"):
         **🟣 Strategy D – Invest First, Then Aggressive**  
         Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
         """)
-        strategy = st.selectbox("Choose a Strategy", ['A', 'B', 'C', 'D'], index=1)
-        invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60)
+        strategy = st.selectbox("Choose a Strategy", ['A', 'B', 'C', 'D'], index=1, help="Pick from 4 strategies: Aggressive Repayment, Balanced, Invest First, etc.")
+        invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60, help="Out of monthly savings, how much to allocate toward investments.")
 
     with st.expander("⚙️ Simulation Settings", expanded=True):
         sim_years = st.slider("Number of Years to Simulate", 1, 30, 10)
