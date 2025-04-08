@@ -17,10 +17,10 @@ with st.sidebar:
     Choose a strategy, enter your assumptions, and simulate outcomes over time.
     """)
     st.markdown("👤 **Built by:** Vijayathithyan B B")
-    st.markdown("[🌐 Visit GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)")
-    st.markdown("[🌐 Visit LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BQXC4bhQvSaWUOuVFIaxYkA%3D%3D)")
-
- st.markdown("### 🎲 Try Advanced Scenario")
+    st.markdown("[🌐 GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)")
+    st.markdown("[🌐 LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BpoVLoxgLQr6rGli3yJJ3aA%3D%3D)")
+    
+    st.markdown("### 🎲 Try Advanced Scenario")
     st.markdown("**Job Loss Probability Simulation**")
     st.markdown("""
     Simulate what happens if you unexpectedly lose your job during the simulation window.
