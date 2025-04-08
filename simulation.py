@@ -83,12 +83,32 @@ def run_simulation(user_input):
 
 def optimize_investment(user_input):
     results = []
+
     for pct in range(0, 101, 5):
-        user_input.percent_to_invest = pct
-        df = run_simulation(user_input)
+        # Create a fresh copy of the user input for each iteration
+        new_input = UserInput(
+            gross_annual_salary_usd=user_input.gross_annual_salary_usd,
+            us_tax_rate=user_input.us_tax_rate,
+            monthly_expenses_usd=user_input.monthly_expenses_usd,
+            loan_amount_inr=user_input.loan_amount_inr,
+            interest_rate_loan=user_input.interest_rate_loan,
+            emi_inr=user_input.emi_inr,
+            moratorium_months=user_input.moratorium_months,
+            loan_term_months=user_input.loan_term_months,
+            investment_rate_annual=user_input.investment_rate_annual,
+            indian_tax_rate=user_input.indian_tax_rate,
+            usd_to_inr_rate=user_input.usd_to_inr_rate,
+            percent_to_invest=pct,
+            years_to_simulate=user_input.years_to_simulate,
+            strategy_type=user_input.strategy_type
+        )
+
+        df = run_simulation(new_input)
         final_net_worth = df.iloc[-1]['Net Worth']
         results.append({"% Invest": pct, "Final Net Worth": final_net_worth})
+
     return pd.DataFrame(results)
+
 
 SIM_HISTORY = []
 
