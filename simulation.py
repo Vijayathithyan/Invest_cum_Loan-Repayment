@@ -190,3 +190,20 @@ def generate_summary(df, user_input):
     st.write(f"📍 Final Net Worth: ₹{final_row['Net Worth']:,.0f}")
     st.write(f"📈 Investment Balance: ₹{final_row['Investment Balance']:,.0f}")
     st.write(f"💸 Remaining Loan Balance: ₹{final_row['Loan Balance']:,.0f}")
+
+# OPTIONAL SECTION: Optimization and History UI elements
+if st.sidebar.button("📈 Optimize % to Invest"):
+    st.subheader("💡 Optimization Results")
+    test_input = st.session_state.user_inputs
+    opt_df = optimize_investment(test_input)
+    chart = alt.Chart(opt_df).mark_line(point=True).encode(
+        x=alt.X('% Invest'),
+        y=alt.Y('Final Net Worth'),
+        tooltip=['% Invest', 'Final Net Worth']
+    ).properties(title='Final Net Worth vs % of Savings Invested').interactive()
+    st.altair_chart(chart, use_container_width=True)
+    st.download_button("Download Optimization Results (CSV)", opt_df.to_csv(index=False), "optimization_output.csv")
+
+if len(SIM_HISTORY) > 0:
+    st.subheader("📜 Simulation History")
+    st.dataframe(pd.DataFrame(SIM_HISTORY))
