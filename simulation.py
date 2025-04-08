@@ -81,6 +81,28 @@ def run_simulation(user_input):
 
     return df
 
+def optimize_investment(user_input):
+    results = []
+    for pct in range(0, 101, 5):
+        user_input.percent_to_invest = pct
+        df = run_simulation(user_input)
+        final_net_worth = df.iloc[-1]['Net Worth']
+        results.append({"% Invest": pct, "Final Net Worth": final_net_worth})
+    return pd.DataFrame(results)
+
+SIM_HISTORY = []
+
+def store_simulation_run(user_input, final_df):
+    summary = {
+        "Strategy": user_input.strategy_type,
+        "% Invest": user_input.percent_to_invest,
+        "Loan Balance": final_df.iloc[-1]['Loan Balance'],
+        "Investment Balance": final_df.iloc[-1]['Investment Balance'],
+        "Net Worth": final_df.iloc[-1]['Net Worth']
+    }
+    SIM_HISTORY.append(summary)
+    return pd.DataFrame(SIM_HISTORY)
+
 def run_simulation_with_jobloss(user_input, jobloss_prob_annual):
     import random
     months = user_input.years_to_simulate * 12
