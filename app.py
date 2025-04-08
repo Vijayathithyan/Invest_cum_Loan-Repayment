@@ -34,11 +34,11 @@ with st.form("input_form"):
         fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5, help="Assumed conversion rate from USD to INR (e.g. 1 USD = 83.5 INR).")
 
     with st.expander("🏦 Loan Details", expanded=True):
-        loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000)
-        interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f")
-        emi = st.number_input("Monthly EMI (INR)", value=27000)
-        moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6)
-        loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240])
+        loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000, help="Total education loan you took from an Indian bank.")
+        interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f", help="Annual interest rate charged on the loan by your bank.")
+        emi = st.number_input("Monthly EMI (INR)", value=27000, help="Fixed monthly loan repayment you must make (EMI).")
+        moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6, help="Months post-graduation before EMIs are required.")
+        loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240], help="Your total loan repayment period in months.")
 
     with st.expander("📈 Investment Details", expanded=True):
         invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f")
