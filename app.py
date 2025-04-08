@@ -41,31 +41,32 @@ with st.form("user_inputs"):
         strategy = st.selectbox("Select Strategy", ["A", "B", "C", "D"], help="Choose a strategy to simulate.")
 
     submitted = st.form_submit_button("Review Your Inputs")
-    if submitted:
-        user_inputs = {
-            "Gross Annual Salary (USD)": gross_salary,
-            "US Tax Rate (%)": us_tax_rate,
-            "Monthly Living Expenses (USD)": monthly_expenses,
-            "Loan Amount (INR)": loan_amount,
-            "Loan Interest Rate (%)": interest_rate,
-            "Monthly EMI (INR)": emi,
-            "Moratorium Period (Months)": moratorium,
-            "Total Loan Term (Months)": loan_term,
-            "Investment Return Rate (%)": invest_rate,
-            "Indian Tax Rate (%)": indian_tax_rate,
-            "USD to INR Conversion Rate": usd_inr,
-            "% of Savings to Invest": pct_invest,
-            "Years to Simulate": years,
-            "Strategy": strategy
-        }
-        st.session_state["user_inputs"] = user_inputs
-        st.success("Inputs recorded. Now start the simulation below!")
+
+if submitted:
+    user_inputs = {
+        "Gross Annual Salary (USD)": gross_salary,
+        "US Tax Rate (%)": us_tax_rate,
+        "Monthly Living Expenses (USD)": monthly_expenses,
+        "Loan Amount (INR)": loan_amount,
+        "Loan Interest Rate (%)": interest_rate,
+        "Monthly EMI (INR)": emi,
+        "Moratorium Period (Months)": moratorium,
+        "Total Loan Term (Months)": loan_term,
+        "Investment Return Rate (%)": invest_rate,
+        "Indian Tax Rate (%)": indian_tax_rate,
+        "USD to INR Conversion Rate": usd_inr,
+        "% of Savings to Invest": pct_invest,
+        "Years to Simulate": years,
+        "Strategy": strategy
+    }
+    st.session_state["user_inputs"] = user_inputs
+    st.success("Inputs recorded. Now start the simulation below!")
 
 # --- MAIN SIMULATION ---
 if "user_inputs" in st.session_state:
     st.markdown("## 🚀 Run Strategy Simulation")
     if st.button("Start Simulation"):
-        u = st.session_state.user_inputs
+        u = st.session_state["user_inputs"]
         user_input = UserInput(
             gross_annual_salary_usd=u["Gross Annual Salary (USD)"],
             us_tax_rate=u["US Tax Rate (%)"] / 100,
@@ -99,7 +100,7 @@ if "user_inputs" in st.session_state:
 if st.sidebar.button("📈 Optimize % to Invest"):
     st.subheader("💡 Optimization Results")
     if "user_inputs" in st.session_state:
-        raw = st.session_state.user_inputs
+        raw = st.session_state["user_inputs"]
         test_input = UserInput(
             gross_annual_salary_usd=raw["Gross Annual Salary (USD)"],
             us_tax_rate=raw["US Tax Rate (%)"] / 100,
