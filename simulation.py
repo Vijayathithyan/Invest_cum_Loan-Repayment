@@ -151,8 +151,8 @@ def plot_simulation_results(df, emi):
                       var_name='Metric', value_name='Amount')
 
     chart = alt.Chart(df_long).mark_line().encode(
-        x=alt.X('Month', title='Month'),
-        y=alt.Y('Amount', title='Amount (INR)'),
+        x=alt.X('Month', title='Month', axis=alt.Axis(grid=False)),
+        y=alt.Y('Amount', title='Amount (INR)', axis=alt.Axis(grid=False)),
         color='Metric',
         tooltip=['Month', 'Metric', 'Amount']
     ).properties(
