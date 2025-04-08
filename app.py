@@ -67,7 +67,6 @@ with st.form("input_form"):
 
     submitted = st.form_submit_button("Review Your Inputs")
     if submitted:
-        st.session_state.form_submitted = True
         st.session_state.user_inputs = {
             "Gross Annual Salary (USD)": gross_salary,
             "US Tax Rate (%)": us_tax,
@@ -85,7 +84,7 @@ with st.form("input_form"):
             "Number of Years to Simulate": sim_years
         }
 
-if st.session_state.form_submitted:
+if "user_inputs" in st.session_state:
     st.subheader("📥 Download Your Input Data")
     input_data = pd.DataFrame([st.session_state.user_inputs])
     csv_data = input_data.to_csv(index=False).encode("utf-8")
