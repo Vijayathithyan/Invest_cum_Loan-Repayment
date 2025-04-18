@@ -145,18 +145,16 @@ elif tabs == "🔍 Optimization Explorer":
 
 # Tab 5: About
 elif tabs == "ℹ️ About":
-    st.header("About This Project")
+    st.header("👤 About the Author")
     st.markdown("""
-👤 About the Author
+**Vijayathithyan B B** is a graduate student at **Virginia Commonwealth University**, pursuing a Master’s in Decision Analytics with a concentration in Accounting Analytics. With a background in auditing and financial risk assessment, Vijay brings together technical expertise in **Python, SQL, and data analytics** with real-world experience in **SOX compliance, internal controls, and forensic accounting**.
 
-Vijayathithyan B B is a graduate student at Virginia Commonwealth University, pursuing a Master’s in Decision Analytics with a concentration in Accounting Analytics. With a background in auditing and financial risk assessment, Vijay brings together technical expertise in Python, SQL, and data analytics with real-world experience in SOX compliance, internal controls, and forensic accounting.
-
-Before transitioning into analytics, he served as a Senior Auditor in India, where he led business development, built audit automation tools, and managed regulatory compliance for growing firms. He is also a CPA-eligible professional with multiple postgraduate degrees in Accounting and Finance.
+Before transitioning into analytics, he served as a Senior Auditor in India, where he led business development, built audit automation tools, and managed regulatory compliance for growing firms. He is also a **CPA-eligible** professional with multiple postgraduate degrees in **Accounting and Finance**.
 
 Vijay is passionate about applying decision science to real-world financial dilemmas — especially those faced by international students like himself. This app was created from personal experience, aiming to simplify complex investment and repayment decisions through interactive simulation and data-driven strategy.
 
 When not crunching numbers or designing tools, Vijay is actively involved in mentoring youth initiatives, co-founding creative workshops, and volunteering for economic development projects in his hometown.
 
-📫 Connect on LinkedIn
-📍 Based in Richmond, VA
-""")
+📫 [Connect on LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
+🔗 [GitHub Repository](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
+    """)
