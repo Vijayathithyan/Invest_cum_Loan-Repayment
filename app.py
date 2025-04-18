@@ -9,7 +9,7 @@ st.set_page_config(page_title="Investment vs Loan Repayment", layout="wide")
 
 # Sidebar navigation
 st.sidebar.header("Navigation")
-tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "📊 Strategy G (Monte Carlo)", "ℹ️ About"])
+tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "📊 Monte Carlo", "ℹ️ About"])
 
 # Common Input Section
 
