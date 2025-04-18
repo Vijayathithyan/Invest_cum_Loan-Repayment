@@ -7,35 +7,14 @@ from simulation import simulate_strategy
 
 st.set_page_config(page_title="Investment vs Loan Repayment", layout="wide")
 
-# Home Tab
-st.title("📊 Investment-Cum-Loan Repayment Simulator")
-st.markdown("""
-Welcome to the **Investment-Cum-Loan Repayment Simulator**! This tool is designed to help you
-make informed decisions about how to allocate your monthly savings between repaying a student loan
-and investing in Indian financial instruments.
-
-### How It Works:
-- Enter your income, loan, and investment details.
-- Choose a strategy: from aggressive repayment to balanced investing.
-- Run a month-by-month simulation for up to 30 years.
-- Get insights on your final net worth, break-even point, and investment coverage.
-
-### Benefits:
-- See how different strategies affect your net worth.
-- Compare strategies side-by-side.
-- Use optimization to find the best savings split.
-
-Use the navigation sidebar to begin your simulation.
-""")
-
 # Sidebar navigation
 st.sidebar.header("Navigation")
 tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "ℹ️ About"])
 
-# Common Input Section (used in all tabs)
+# Common Input Section
+
 def user_inputs():
     col1, col2 = st.columns(2)
-
     with col1:
         years_to_simulate = st.number_input("Simulation Duration (Years)", min_value=1, max_value=30, value=10)
         gross_annual_salary_usd = st.number_input("Gross Annual Salary (USD)", value=90000.0)
@@ -44,7 +23,6 @@ def user_inputs():
         emi_inr = st.number_input("Monthly EMI (INR)", value=27000.0)
         investment_rate_annual = st.slider("Investment Return Rate (%)", 0.0, 40.0, 12.0) / 100
         usd_to_inr_rate = st.number_input("USD to INR Rate", value=83.5)
-
     with col2:
         moratorium_months = st.slider("Moratorium Period (Months)", 0, 36, 6)
         us_tax_rate = st.slider("US Income Tax Rate (%)", 10, 40, 25) / 100
@@ -67,16 +45,34 @@ def user_inputs():
         'usd_to_inr_rate': usd_to_inr_rate
     }
 
-# Tab 1: Home
+# Home tab content
 if tabs == "🏠 Home":
-    pass
+    st.title("📊 Investment-Cum-Loan Repayment Simulator")
+    st.markdown("""
+Welcome to the **Investment-Cum-Loan Repayment Simulator**! This tool is designed to help you
+make informed decisions about how to allocate your monthly savings between repaying a student loan
+and investing in Indian financial instruments.
 
-# Tab 2: Run Simulation
+### How It Works:
+- Enter your income, loan, and investment details.
+- Choose a strategy: from aggressive repayment to balanced investing.
+- Run a month-by-month simulation for up to 30 years.
+- Get insights on your final net worth, break-even point, and investment coverage.
+
+### Benefits:
+- See how different strategies affect your net worth.
+- Compare strategies side-by-side.
+- Use optimization to find the best savings split.
+
+Use the navigation sidebar to begin your simulation.
+""")
+
+# Run Simulation tab content
 elif tabs == "🏃‍♂️ Run Simulation":
     st.header("Run a Strategy Simulation")
     params = user_inputs()
 
-    st.subheader("🧠 Understand the Strategies")
+    st.subheader("🧠 Strategy Selection")
     with st.expander("Click to View Strategy Descriptions"):
         st.markdown("""
 - **🔴 Strategy A – Aggressive Repayment:** All savings go toward loan until it is cleared.
@@ -133,23 +129,28 @@ elif tabs == "🏃‍♂️ Run Simulation":
             csv = df.to_csv(index=True).encode('utf-8')
             st.download_button("Download CSV", data=csv, file_name="simulation_output.csv", mime="text/csv")
 
-# Tab 3: Strategy Comparison (Placeholder)
+# Strategy Comparison
 elif tabs == "📈 Strategy Comparison":
     st.header("Compare Multiple Strategies")
     st.info("🛠 This module will allow running multiple strategies side-by-side. Coming next!")
 
-# Tab 4: Optimization Explorer (Placeholder)
+# Optimization
 elif tabs == "🔍 Optimization Explorer":
     st.header("Optimize Savings Split")
     st.info("🛠 This module will optimize % allocation to investment vs repayment. Coming next!")
 
-# Tab 5: About
+# About
 elif tabs == "ℹ️ About":
-    st.header("About This Project")
+    st.header("👤 About the Author")
     st.markdown("""
-This app helps international students or professionals simulate different strategies for handling
-loan repayments and investments after graduation.
+**Vijayathithyan B B** is a graduate student at **Virginia Commonwealth University**, pursuing a Master’s in Decision Analytics with a concentration in Accounting Analytics. With a background in auditing and financial risk assessment, Vijay brings together technical expertise in **Python, SQL, and data analytics** with real-world experience in **SOX compliance, internal controls, and forensic accounting**.
 
-Built using **Python**, **Pandas**, **Streamlit**, and **Plotly**.
-GitHub: [Invest-Cum-Loan-Repayment](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
-""")
+Before transitioning into analytics, he served as a Senior Auditor in India, where he led business development, built audit automation tools, and managed regulatory compliance for growing firms. He is also a **CPA-eligible** professional with multiple postgraduate degrees in **Accounting and Finance**.
+
+Vijay is passionate about applying decision science to real-world financial dilemmas — especially those faced by international students like himself. This app was created from personal experience, aiming to simplify complex investment and repayment decisions through interactive simulation and data-driven strategy.
+
+When not crunching numbers or designing tools, Vijay is actively involved in mentoring youth initiatives, co-founding creative workshops, and volunteering for economic development projects in his hometown.
+
+📫 [LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
+🔗 [GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
+    """)
