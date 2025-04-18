@@ -159,7 +159,7 @@ You can explore the distribution of net worth based on unpredictable saving beha
             fig = px.histogram(df_runs, x='Final Net Worth (INR)', nbins=30, title="Distribution of Final Net Worth")
             st.plotly_chart(fig, use_container_width=True)
 
-             st.subheader("🧠 Interpretation")
+            st.subheader("🧠 Interpretation")
             st.markdown(f"""
             After running {num_runs} randomized simulations of Strategy G:
             
