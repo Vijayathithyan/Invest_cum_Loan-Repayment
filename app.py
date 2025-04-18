@@ -7,6 +7,10 @@ from simulation import simulate_strategy
 
 st.set_page_config(page_title="Investment vs Loan Repayment", layout="wide")
 
+# Sidebar navigation
+st.sidebar.header("Navigation")
+tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "ℹ️ About"])
+
 # Home Tab
 if tabs == "🏠 Home":
     st.title("📊 Investment-Cum-Loan Repayment Simulator")
@@ -28,10 +32,6 @@ and investing in Indian financial instruments.
 
 Use the navigation sidebar to begin your simulation.
 """)
-
-# Sidebar navigation
-st.sidebar.header("Navigation")
-tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "ℹ️ About"])
 
 # Common Input Section (used in all tabs)
 def user_inputs():
