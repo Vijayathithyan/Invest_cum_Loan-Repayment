@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+import random
 
 def calculate_monthly_savings(gross_annual_salary_usd, us_tax_rate, monthly_expenses_usd):
     monthly_income_after_tax = (gross_annual_salary_usd / 12) * (1 - us_tax_rate)
@@ -12,9 +13,8 @@ def apply_tax(value, annual_tax_rate):
 
 def simulate_strategy(params):
     months = params['years_to_simulate'] * 12
-    results = []  # Store rows here
+    results = []
 
-    # Initialization
     loan_balance = params['loan_amount_inr']
     investment_balance = 0
     emi = params['emi_inr']
@@ -38,7 +38,6 @@ def simulate_strategy(params):
         loan_payment = 0
         is_moratorium = month <= moratorium
 
-        # Interest added to loan
         if is_moratorium:
             loan_balance *= (1 + monthly_loan_rate)
             emi_payment = 0
@@ -46,54 +45,52 @@ def simulate_strategy(params):
             loan_balance *= (1 + monthly_loan_rate)
             emi_payment = min(loan_balance, emi)
 
-            # Strategy logic
-            if params['strategy'] == 'A':
-                extra_payment = min(loan_balance - emi_payment, monthly_savings_inr)
-                invest_contrib = 0
+            strategy = params['strategy']
 
-            elif params['strategy'] == 'B':
+            if strategy == 'A':
+                extra_payment = min(loan_balance - emi_payment, monthly_savings_inr)
+
+            elif strategy == 'B':
                 invest_ratio = params.get('invest_ratio', 0.5)
                 invest_contrib = monthly_savings_inr * invest_ratio
                 extra_payment = min(loan_balance - emi_payment, monthly_savings_inr - invest_contrib)
 
-            elif params['strategy'] == 'C':
+            elif strategy == 'C':
                 if is_moratorium:
                     invest_contrib = monthly_savings_inr
-                    extra_payment = 0
                 else:
                     invest_ratio = params.get('invest_ratio', 0.5)
                     invest_contrib = monthly_savings_inr * invest_ratio
                     extra_payment = min(loan_balance - emi_payment, monthly_savings_inr - invest_contrib)
 
-            elif params['strategy'] == 'D':
+            elif strategy == 'D':
                 if is_moratorium:
                     invest_contrib = monthly_savings_inr
-                    extra_payment = 0
                 elif loan_balance > 0:
-                    invest_contrib = 0
                     extra_payment = min(loan_balance - emi_payment, monthly_savings_inr)
                 else:
                     invest_contrib = monthly_savings_inr
-                    extra_payment = 0
 
-            elif params['strategy'] == 'E':
+            elif strategy == 'E':
                 repay_threshold = params.get('repay_threshold', 0.5)
                 repaid_ratio = (total_loan - loan_balance) / total_loan
                 if repaid_ratio < repay_threshold:
-                    invest_contrib = 0
                     extra_payment = min(loan_balance - emi_payment, monthly_savings_inr)
                 else:
                     invest_contrib = monthly_savings_inr
-                    extra_payment = 0
 
-            elif params['strategy'] == 'F':
+            elif strategy == 'F':
                 risk_type = params.get('risk_type', 'job')
                 if risk_type == 'job':
-                    job_sec = params.get('job_security_prob', 1)
-                    invest_ratio = job_sec
+                    invest_ratio = params.get('job_security_prob', 1.0)
                 else:
                     volatility = params.get('investment_volatility', 0.2)
-                    invest_ratio = max(0.0, 1 - volatility)
+                    invest_ratio = max(0.0, 1.0 - volatility)
+                invest_contrib = monthly_savings_inr * invest_ratio
+                extra_payment = min(loan_balance - emi_payment, monthly_savings_inr - invest_contrib)
+
+            elif strategy == 'G':
+                invest_ratio = random.uniform(0.0, 1.0)
                 invest_contrib = monthly_savings_inr * invest_ratio
                 extra_payment = min(loan_balance - emi_payment, monthly_savings_inr - invest_contrib)
 
@@ -104,14 +101,12 @@ def simulate_strategy(params):
             loan_payment = emi_payment + extra_payment
             loan_balance -= loan_payment
 
-        # Investment update
         investment_balance *= (1 + monthly_invest_rate)
         investment_balance += invest_contrib
 
         investment_income = investment_balance * monthly_invest_rate
         investment_income_after_tax = apply_tax(investment_income, params['indian_tax_rate'])
 
-        # Metrics
         net_worth = investment_balance - loan_balance
         if break_even_month is None and net_worth >= 0:
             break_even_month = month
@@ -120,7 +115,6 @@ def simulate_strategy(params):
         if not loan_repaid and loan_balance <= 0:
             loan_repaid = True
 
-        # Save monthly values
         row['Month'] = month
         row['Opening Loan Balance'] = loan_balance + loan_payment
         row['Loan Payment (INR)'] = loan_payment if not is_moratorium else 0
