@@ -90,6 +90,7 @@ elif tabs == "🏃‍♂️ Run Simulation":
         "D - Invest First, Then Aggressive",
         "E - Dynamic Allocation",
         "F - Risk-Aware Allocation"
+        "G - Random Split Simulation"
     ])
 
     strategy_code = strategy[0]
