@@ -137,7 +137,7 @@ elif tabs == "📈 Strategy Comparison":
     st.info("🛠 This module will allow running multiple strategies side-by-side. Coming next!")
 
 # Strategy G (Monte Carlo)
-elif tabs == "📊 Strategy G (Monte Carlo)":
+elif tabs == "📊 Monte Carlo":
     st.header("🎲 Monte Carlo Simulation – Strategy G")
     st.markdown("""
 This tool runs Strategy G (Random Split Simulation) multiple times to analyze variability in final outcomes.
