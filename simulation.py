@@ -12,7 +12,7 @@ def apply_tax(value, annual_tax_rate):
 
 def simulate_strategy(params):
     months = params['years_to_simulate'] * 12
-    df = pd.DataFrame(index=range(1, months + 1))
+    results = []  # Store rows here
 
     # Initialization
     loan_balance = params['loan_amount_inr']
@@ -31,7 +31,7 @@ def simulate_strategy(params):
     emi_covered_month = None
     loan_repaid = False
 
-    for month in df.index:
+    for month in range(1, months + 1):
         row = {}
         invest_contrib = 0
         extra_payment = 0
@@ -42,13 +42,12 @@ def simulate_strategy(params):
         if is_moratorium:
             loan_balance *= (1 + monthly_loan_rate)
             emi_payment = 0
-            extra_payment = 0
         else:
             loan_balance *= (1 + monthly_loan_rate)
             emi_payment = min(loan_balance, emi)
 
             # Strategy logic
-            if params['strategy'] == 'A':  # Aggressive Repayment
+            if params['strategy'] == 'A':
                 extra_payment = min(loan_balance - emi_payment, monthly_savings_inr)
                 invest_contrib = 0
 
@@ -122,6 +121,7 @@ def simulate_strategy(params):
             loan_repaid = True
 
         # Save monthly values
+        row['Month'] = month
         row['Opening Loan Balance'] = loan_balance + loan_payment
         row['Loan Payment (INR)'] = loan_payment if not is_moratorium else 0
         row['Remaining Loan Balance'] = loan_balance
@@ -133,11 +133,12 @@ def simulate_strategy(params):
         row['Total Investment (USD)'] = investment_balance / params['usd_to_inr_rate']
         row['Net Worth (INR)'] = net_worth
 
-        df.loc[month] = row
+        results.append(row)
 
         if loan_balance <= 0:
             loan_balance = 0
 
+    df = pd.DataFrame(results).set_index('Month')
     summary = {
         'final_net_worth': net_worth,
         'loan_cleared_month': break_even_month,
