@@ -2,12 +2,59 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from simulation import simulate_strategy, simulate_multiple_runs
-from input_utils import user_inputs  # Assume you moved input form logic here
 
 st.set_page_config(page_title="Investment vs Loan Repayment", layout="wide")
 
-# Sidebar Navigation
-st.sidebar.header("Navigation")
+# -------------------- USER INPUT FUNCTION --------------------
+def user_inputs():
+    st.sidebar.header("📥 Input Parameters")
+    
+    st.sidebar.subheader("Simulation Settings")
+    years = st.sidebar.slider("Simulation Duration (Years)", 1, 30, 10)
+    grad_month = st.sidebar.selectbox("Expected Graduation Month", list(range(1, 13)))
+    moratorium = st.sidebar.slider("Moratorium Period (Months)", 0, 24, 6)
+
+    st.sidebar.subheader("Salary & Living")
+    salary = st.sidebar.number_input("Gross Annual Salary (USD)", min_value=0, value=90000)
+    tax_rate = st.sidebar.slider("US Tax Rate (%)", 0, 40, 25) / 100
+    expenses = st.sidebar.number_input("Monthly Expenses (USD)", min_value=0, value=2000)
+
+    st.sidebar.subheader("Loan Details")
+    loan_amt = st.sidebar.number_input("Loan Amount (INR)", min_value=0, value=2500000)
+    loan_rate = st.sidebar.number_input("Annual Loan Interest Rate (%)", min_value=0.0, value=11.0) / 100
+    emi = st.sidebar.number_input("Monthly EMI (INR)", min_value=0, value=27000)
+    loan_term = st.sidebar.slider("Loan Term (Months)", 12, 300, 120)
+
+    st.sidebar.subheader("Investment Info")
+    inv_rate = st.sidebar.slider("Annual Return Rate (%)", 0, 50, 12) / 100
+    tax_india = st.sidebar.slider("Indian Tax Rate (%)", 0, 30, 15) / 100
+    fx = st.sidebar.number_input("USD to INR Conversion Rate", min_value=0.0, value=83.5)
+
+    st.sidebar.subheader("Strategy Settings")
+    invest_pct = st.sidebar.slider("Investment % of Savings", 0, 100, 50)
+    threshold_pct = st.sidebar.slider("Loan Repayment Threshold % (Strategy E)", 0, 100, 50)
+    risk_type = st.sidebar.selectbox("Risk Driver (Strategy F)", ["Job Security", "Investment Volatility"])
+
+    return {
+        'years': years,
+        'graduation_month': grad_month,
+        'moratorium_months': moratorium,
+        'gross_annual_salary_usd': salary,
+        'us_tax_rate': tax_rate,
+        'monthly_expenses_usd': expenses,
+        'loan_amount_inr': loan_amt,
+        'interest_rate_loan': loan_rate,
+        'emi_inr': emi,
+        'loan_term_months': loan_term,
+        'investment_rate_annual': inv_rate,
+        'indian_tax_rate': tax_india,
+        'usd_to_inr_rate': fx,
+        'percent_to_invest': invest_pct,
+        'threshold_pct': threshold_pct,
+        'risk_type': risk_type
+    }
+
+# -------------------- NAVIGATION --------------------
 tabs = st.sidebar.radio("Go to:", [
     "🏠 Home", 
     "🏃‍♂️ Run Simulation", 
@@ -17,7 +64,6 @@ tabs = st.sidebar.radio("Go to:", [
     "ℹ️ About"
 ])
 
-# 🌐 Collect all inputs once — globally reused
 params = user_inputs()
 
 # -------------------- HOME --------------------
@@ -31,7 +77,7 @@ Choose from multiple strategies, simulate outcomes over time, and optimize based
 # -------------------- RUN SIMULATION --------------------
 elif tabs == "🏃‍♂️ Run Simulation":
     st.header("📈 Run a Strategy Simulation")
-    
+
     strategy = st.radio("Choose a Strategy", [
         "A - Aggressive Repayment",
         "B - Balanced",
@@ -57,10 +103,9 @@ elif tabs == "🏃‍♂️ Run Simulation":
 
         st.subheader("📄 Detailed Monthly Table")
         st.dataframe(df)
-
         st.download_button("Download Results", data=df.to_csv().encode(), file_name="simulation_output.csv")
 
-# -------------------- STRATEGY G: MONTE CARLO --------------------
+# -------------------- MONTE CARLO SIMULATION --------------------
 elif tabs == "📊 Strategy G (Monte Carlo)":
     st.header("🎲 Monte Carlo Simulation – Strategy G")
     st.markdown("""
@@ -92,12 +137,12 @@ After running {num_runs} randomized simulations of Strategy G:
 
 - 💰 **Average Net Worth:** ₹{desc['mean']:,.0f}
 - 📉 **Min:** ₹{desc['min']:,.0f}, 📈 **Max:** ₹{desc['max']:,.0f}
-- 📊 Majority outcomes fall between ₹{desc['25%']:,.0f} and ₹{desc['75%']:,.0f}
+- 📊 Most users land between ₹{desc['25%']:,.0f} and ₹{desc['75%']:,.0f}
 
 > Even with unpredictable monthly splits, this shows your likely outcome range.
 """)
 
-# -------------------- OPTIMIZATION --------------------
+# -------------------- OPTIMIZATION EXPLORER --------------------
 elif tabs == "🔍 Optimization Explorer":
     st.header("🔍 Optimization Explorer")
     st.markdown("""
