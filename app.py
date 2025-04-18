@@ -8,8 +8,9 @@ from simulation import simulate_strategy
 st.set_page_config(page_title="Investment vs Loan Repayment", layout="wide")
 
 # Home Tab
-st.title("📊 Investment-Cum-Loan Repayment Simulator")
-st.markdown("""
+if tabs == "🏠 Home":
+    st.title("📊 Investment-Cum-Loan Repayment Simulator")
+    st.markdown("""
 Welcome to the **Investment-Cum-Loan Repayment Simulator**! This tool is designed to help you
 make informed decisions about how to allocate your monthly savings between repaying a student loan
 and investing in Indian financial instruments.
@@ -155,6 +156,6 @@ Vijay is passionate about applying decision science to real-world financial dile
 
 When not crunching numbers or designing tools, Vijay is actively involved in mentoring youth initiatives, co-founding creative workshops, and volunteering for economic development projects in his hometown.
 
-📫 [LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
-🔗 [GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
+📫 [Connect on LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
+🔗 [GitHub Repository](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
     """)
