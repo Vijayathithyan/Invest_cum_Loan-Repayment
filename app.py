@@ -11,6 +11,8 @@ st.set_page_config(page_title="Investment vs Loan Repayment", layout="wide")
 st.sidebar.header("Navigation")
 tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "📊 Monte Carlo", "ℹ️ About"])
 
+params = user_inputs()  # Collect once for all tabs
+
 # Common Input Section
 
 def user_inputs():
