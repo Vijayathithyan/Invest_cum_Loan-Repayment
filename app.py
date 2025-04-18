@@ -181,10 +181,33 @@ You can explore the distribution of net worth based on unpredictable saving beha
 elif tabs == "🔍 Optimization Explorer":
     st.header("🔍 Optimization Explorer")
     st.markdown("""
-This tool helps find the **optimal savings split** between loan repayment and investment (for strategies B and C) that will **maximize your final net worth**.
-
-You can simulate different allocation percentages and select the one that gives the best result.
+This tool helps you find the **optimal savings split** between loan repayment and investment for strategies like **B** or **C**.
 """)
+
+    strategy_opt = st.selectbox("Select a Strategy to Optimize", ["B - Balanced", "C - Invest First, Then Balanced"])
+    granularity = st.slider("Search Step Size (in %)", min_value=1, max_value=25, value=5)
+
+    # Set strategy code in params
+    params["strategy"] = strategy_opt[0]
+
+    if st.button("Run Optimization"):
+        with st.spinner("Running simulations across different investment splits..."):
+            from simulation import optimize_investment_split
+            df_opt = optimize_investment_split(params, step=granularity)
+
+            st.success("Optimization complete!")
+
+            st.subheader("📈 Final Net Worth vs. Investment %")
+            fig = px.line(df_opt, x="Investment %", y="Final Net Worth", markers=True)
+            st.plotly_chart(fig, use_container_width=True)
+
+            best_row = df_opt.loc[df_opt["Final Net Worth"].idxmax()]
+            st.subheader("🏆 Best Allocation Recommendation")
+            st.markdown(f"""
+- 💸 **Optimal Investment %:** {int(best_row['Investment %'])}%
+- 💰 **Final Net Worth:** ₹{best_row['Final Net Worth']:,.0f}
+""")
+
 
 # About
 elif tabs == "ℹ️ About":
