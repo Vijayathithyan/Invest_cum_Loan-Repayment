@@ -141,3 +141,16 @@ def simulate_strategy(params):
     }
 
     return df, summary
+
+def simulate_multiple_runs(params, runs=100):
+    results = []
+    for i in range(runs):
+        run_params = params.copy()
+        run_params['strategy'] = 'G'  # force strategy G for all runs
+        df, summary = simulate_strategy(run_params)
+        results.append({
+            'Run': i + 1,
+            'Final Net Worth (INR)': summary['final_net_worth']
+        })
+    return pd.DataFrame(results)
+
