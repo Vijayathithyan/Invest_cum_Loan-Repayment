@@ -89,7 +89,7 @@ elif tabs == "🏃‍♂️ Run Simulation":
         "C - Invest First, Then Balanced",
         "D - Invest First, Then Aggressive",
         "E - Dynamic Allocation",
-        "F - Risk-Aware Allocation"
+        "F - Risk-Aware Allocation",
         "G - Random Split Simulation"
     ])
 
