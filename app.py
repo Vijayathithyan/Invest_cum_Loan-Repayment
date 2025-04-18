@@ -81,6 +81,7 @@ elif tabs == "🏃‍♂️ Run Simulation":
 - **🔸 Strategy D – Invest First, Then Aggressive:** Invest during moratorium, then repay loan aggressively.
 - **🟢 Strategy E – Dynamic Allocation:** Repay until X% loan cleared, then invest fully.
 - **🟠 Strategy F – Risk-Aware:** Allocation varies monthly based on job security or investment volatility.
+- **🟣 Strategy G – Random Split Simulation:** Each month, the savings split between investment and repayment is randomized. This allows users to explore how unpredictable behavior might impact final outcomes.
         """)
 
     strategy = st.radio("Choose a Strategy", [
