@@ -7,14 +7,9 @@ from simulation import simulate_strategy
 
 st.set_page_config(page_title="Investment vs Loan Repayment", layout="wide")
 
-# Sidebar navigation
-st.sidebar.header("Navigation")
-tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "ℹ️ About"])
-
 # Home Tab
-if tabs == "🏠 Home":
-    st.title("📊 Investment-Cum-Loan Repayment Simulator")
-    st.markdown("""
+st.title("📊 Investment-Cum-Loan Repayment Simulator")
+st.markdown("""
 Welcome to the **Investment-Cum-Loan Repayment Simulator**! This tool is designed to help you
 make informed decisions about how to allocate your monthly savings between repaying a student loan
 and investing in Indian financial instruments.
@@ -32,6 +27,10 @@ and investing in Indian financial instruments.
 
 Use the navigation sidebar to begin your simulation.
 """)
+
+# Sidebar navigation
+st.sidebar.header("Navigation")
+tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "ℹ️ About"])
 
 # Common Input Section (used in all tabs)
 def user_inputs():
@@ -88,17 +87,17 @@ elif tabs == "🏃‍♂️ Run Simulation":
 - **🟠 Strategy F – Risk-Aware:** Allocation varies monthly based on job security or investment volatility.
         """)
 
-       strategy = st.radio("Choose a Strategy", [
-    "A - Aggressive Repayment",
-    "B - Balanced",
-    "C - Invest First, Then Balanced",
-    "D - Invest First, Then Aggressive",
-    "E - Dynamic Allocation",
-    "F - Risk-Aware Allocation"
-])
-params['strategy'] = strategy[0]  # Extract strategy code
+    strategy = st.radio("Choose a Strategy", [
+        "A - Aggressive Repayment",
+        "B - Balanced",
+        "C - Invest First, Then Balanced",
+        "D - Invest First, Then Aggressive",
+        "E - Dynamic Allocation",
+        "F - Risk-Aware Allocation"
+    ])
 
-
+    strategy_code = strategy[0]
+    params['strategy'] = strategy_code
 
     if strategy_code in ['B', 'C']:
         params['invest_ratio'] = st.slider("% of Savings to Invest", 0, 100, 50) / 100
@@ -146,16 +145,11 @@ elif tabs == "🔍 Optimization Explorer":
 
 # Tab 5: About
 elif tabs == "ℹ️ About":
-    st.header("👤 About the Author")
+    st.header("About This Project")
     st.markdown("""
-**Vijayathithyan B B** is a graduate student at **Virginia Commonwealth University**, pursuing a Master’s in Decision Analytics with a concentration in Accounting Analytics. With a background in auditing and financial risk assessment, Vijay brings together technical expertise in **Python, SQL, and data analytics** with real-world experience in **SOX compliance, internal controls, and forensic accounting**.
+This app helps international students or professionals simulate different strategies for handling
+loan repayments and investments after graduation.
 
-Before transitioning into analytics, he served as a Senior Auditor in India, where he led business development, built audit automation tools, and managed regulatory compliance for growing firms. He is also a **CPA-eligible** professional with multiple postgraduate degrees in **Accounting and Finance**.
-
-Vijay is passionate about applying decision science to real-world financial dilemmas — especially those faced by international students like himself. This app was created from personal experience, aiming to simplify complex investment and repayment decisions through interactive simulation and data-driven strategy.
-
-When not crunching numbers or designing tools, Vijay is actively involved in mentoring youth initiatives, co-founding creative workshops, and volunteering for economic development projects in his hometown.
-
-📫 [Connect on LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
-🔗 [GitHub Repository](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
-    """)
+Built using **Python**, **Pandas**, **Streamlit**, and **Plotly**.
+GitHub: [Invest-Cum-Loan-Repayment](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
+""")
