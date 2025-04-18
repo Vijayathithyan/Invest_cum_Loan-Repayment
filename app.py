@@ -154,13 +154,27 @@ You can explore the distribution of net worth based on unpredictable saving beha
 
             st.success("Simulation complete!")
 
+            st.subheader("🧠 Interpretation")
+            st.markdown(f"""
+            After running {num_runs} randomized simulations of Strategy G:
+            
+            - 💰 On average, your net worth at the end of the simulation was **₹{desc['mean']:,.0f}**.
+            - 📉 The lowest outcome observed was **₹{desc['min']:,.0f}**, and the highest was **₹{desc['max']:,.0f}**.
+            - 📊 This spread shows how unpredictable monthly decisions can impact your long-term wealth.
+            
+            👉 In simple terms: Even if you don't follow a fixed savings plan, you'll likely end up between ₹{desc['25%']:,.0f} and ₹{desc['75%']:,.0f}, assuming similar income and loan conditions.
+            """)
+            
             st.subheader("📊 Net Worth Distribution")
             import plotly.express as px
             fig = px.histogram(df_runs, x='Final Net Worth (INR)', nbins=30, title="Distribution of Final Net Worth")
             st.plotly_chart(fig, use_container_width=True)
 
             st.subheader("📋 Summary Statistics")
-            st.write(df_runs['Final Net Worth (INR)'].describe().apply(lambda x: f"₹{x:,.2f}"))
+            desc = df_runs['Final Net Worth (INR)'].describe()
+            desc_formatted = desc.apply(lambda x: f"₹{x:,.2f}" if desc.name != 'count' else f"{x:,.0f}")
+            desc_formatted['count'] = f"{int(desc['count'])}"  # Ensure count is integer and no ₹
+            st.write(desc_formatted)
 
 # About
 elif tabs == "ℹ️ About":
