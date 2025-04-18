@@ -1,144 +1,145 @@
+# simulation.py
+
 import pandas as pd
+import numpy as np
 
-class UserInput:
-    def __init__(self, gross_annual_salary_usd, us_tax_rate, monthly_expenses_usd, 
-                 loan_amount_inr, interest_rate_loan, emi_inr, moratorium_months,
-                 loan_term_months, investment_rate_annual, indian_tax_rate,
-                 usd_to_inr_rate, percent_to_invest, years_to_simulate, strategy_type):
-        self.gross_annual_salary_usd = gross_annual_salary_usd
-        self.us_tax_rate = us_tax_rate
-        self.monthly_expenses_usd = monthly_expenses_usd
-        self.loan_amount_inr = loan_amount_inr
-        self.interest_rate_loan = interest_rate_loan
-        self.emi_inr = emi_inr
-        self.moratorium_months = moratorium_months
-        self.loan_term_months = loan_term_months
-        self.investment_rate_annual = investment_rate_annual
-        self.indian_tax_rate = indian_tax_rate
-        self.usd_to_inr_rate = usd_to_inr_rate
-        self.percent_to_invest = percent_to_invest
-        self.years_to_simulate = years_to_simulate
-        self.strategy_type = strategy_type
+def calculate_monthly_savings(gross_annual_salary_usd, us_tax_rate, monthly_expenses_usd):
+    monthly_income_after_tax = (gross_annual_salary_usd / 12) * (1 - us_tax_rate)
+    return monthly_income_after_tax - monthly_expenses_usd
 
-def run_simulation(user_input):
-    months = user_input.years_to_simulate * 12
-    df = pd.DataFrame(columns=["Month", "Loan Balance", "Investment Balance", "Net Worth", "Investment Return"])
+def apply_tax(value, annual_tax_rate):
+    return value * (1 - annual_tax_rate)
 
-    loan_balance = user_input.loan_amount_inr
+def simulate_strategy(params):
+    months = params['years_to_simulate'] * 12
+    df = pd.DataFrame(index=range(1, months + 1))
+
+    # Initialization
+    loan_balance = params['loan_amount_inr']
     investment_balance = 0
-    monthly_loan_interest = user_input.interest_rate_loan / 12 / 100
-    monthly_investment_return = user_input.investment_rate_annual / 12 / 100
-    monthly_savings_usd = (user_input.gross_annual_salary_usd / 12) * (1 - user_input.us_tax_rate) - user_input.monthly_expenses_usd
-    monthly_savings_inr = monthly_savings_usd * user_input.usd_to_inr_rate
-    invest_ratio = user_input.percent_to_invest / 100
-    repay_ratio = 1 - invest_ratio
-    loan_fully_repaid = False
+    emi = params['emi_inr']
+    moratorium = params['moratorium_months']
+    total_loan = params['loan_amount_inr']
+    monthly_loan_rate = params['interest_rate_loan'] / 12
+    monthly_invest_rate = params['investment_rate_annual'] / 12
+    monthly_savings_usd = calculate_monthly_savings(
+        params['gross_annual_salary_usd'], params['us_tax_rate'], params['monthly_expenses_usd']
+    )
+    monthly_savings_inr = monthly_savings_usd * params['usd_to_inr_rate']
 
-    for month in range(1, months + 1):
-        loan_balance *= (1 + monthly_loan_interest)
+    break_even_month = None
+    emi_covered_month = None
+    loan_repaid = False
 
-        if month > user_input.moratorium_months and not loan_fully_repaid:
-            loan_balance -= user_input.emi_inr
+    for month in df.index:
+        row = {}
+        is_moratorium = month <= moratorium
 
-        investment_contrib = 0
-        repay_extra = 0
+        # Interest added to loan
+        if is_moratorium:
+            loan_balance *= (1 + monthly_loan_rate)
+            emi_payment = 0
+            extra_payment = 0
+        else:
+            loan_balance *= (1 + monthly_loan_rate)
+            emi_payment = min(loan_balance, emi)
 
-        if user_input.strategy_type == 'A':
-            if not loan_fully_repaid:
-                repay_extra = monthly_savings_inr
+            # Strategy logic
+            if params['strategy'] == 'A':  # Aggressive Repayment
+                extra_payment = min(loan_balance - emi_payment, monthly_savings_inr)
+                invest_contrib = 0
+
+            elif params['strategy'] == 'B':
+                invest_ratio = params.get('invest_ratio', 0.5)
+                invest_contrib = monthly_savings_inr * invest_ratio
+                extra_payment = min(loan_balance - emi_payment, monthly_savings_inr - invest_contrib)
+
+            elif params['strategy'] == 'C':
+                if is_moratorium:
+                    invest_contrib = monthly_savings_inr
+                    extra_payment = 0
+                else:
+                    invest_ratio = params.get('invest_ratio', 0.5)
+                    invest_contrib = monthly_savings_inr * invest_ratio
+                    extra_payment = min(loan_balance - emi_payment, monthly_savings_inr - invest_contrib)
+
+            elif params['strategy'] == 'D':
+                if is_moratorium:
+                    invest_contrib = monthly_savings_inr
+                    extra_payment = 0
+                elif loan_balance > 0:
+                    invest_contrib = 0
+                    extra_payment = min(loan_balance - emi_payment, monthly_savings_inr)
+                else:
+                    invest_contrib = monthly_savings_inr
+                    extra_payment = 0
+
+            elif params['strategy'] == 'E':
+                repay_threshold = params.get('repay_threshold', 0.5)
+                repaid_ratio = (total_loan - loan_balance) / total_loan
+                if repaid_ratio < repay_threshold:
+                    invest_contrib = 0
+                    extra_payment = min(loan_balance - emi_payment, monthly_savings_inr)
+                else:
+                    invest_contrib = monthly_savings_inr
+                    extra_payment = 0
+
+            elif params['strategy'] == 'F':
+                risk_type = params.get('risk_type', 'job')
+                if risk_type == 'job':
+                    job_sec = params.get('job_security_prob', 1)
+                    invest_ratio = job_sec
+                else:
+                    volatility = params.get('investment_volatility', 0.2)
+                    invest_ratio = max(0.0, 1 - volatility)
+                invest_contrib = monthly_savings_inr * invest_ratio
+                extra_payment = min(loan_balance - emi_payment, monthly_savings_inr - invest_contrib)
+
             else:
-                investment_contrib = monthly_savings_inr
-        elif user_input.strategy_type == 'B':
-            investment_contrib = monthly_savings_inr * invest_ratio
-            repay_extra = monthly_savings_inr * repay_ratio
-        elif user_input.strategy_type == 'C':
-            if month <= user_input.moratorium_months:
-                investment_contrib = monthly_savings_inr
-            else:
-                investment_contrib = monthly_savings_inr * invest_ratio
-                repay_extra = monthly_savings_inr * repay_ratio
-        elif user_input.strategy_type == 'D':
-            if month <= user_input.moratorium_months:
-                investment_contrib = monthly_savings_inr
-            else:
-                repay_extra = monthly_savings_inr
+                invest_contrib = monthly_savings_inr / 2
+                extra_payment = monthly_savings_inr / 2
 
-        if not loan_fully_repaid:
-            loan_balance -= repay_extra
-            if loan_balance <= 0:
-                loan_balance = 0
-                loan_fully_repaid = True
+            loan_payment = emi_payment + extra_payment
+            loan_balance -= loan_payment
 
-        investment_balance += investment_contrib
-        returns = investment_balance * monthly_investment_return * (1 - user_input.indian_tax_rate / 100)
-        investment_balance += returns
+        # Investment update
+        investment_balance *= (1 + monthly_invest_rate)
+        investment_balance += invest_contrib
+
+        investment_income = investment_balance * monthly_invest_rate
+        investment_income_after_tax = apply_tax(investment_income, params['indian_tax_rate'])
+
+        # Metrics
         net_worth = investment_balance - loan_balance
+        if break_even_month is None and net_worth >= 0:
+            break_even_month = month
+        if emi_covered_month is None and investment_income_after_tax >= emi:
+            emi_covered_month = month
+        if not loan_repaid and loan_balance <= 0:
+            loan_repaid = True
 
-        df.loc[month - 1] = [month, loan_balance, investment_balance, net_worth, returns]
+        # Save monthly values
+        row['Opening Loan Balance'] = loan_balance + loan_payment
+        row['Loan Payment (INR)'] = loan_payment if not is_moratorium else 0
+        row['Remaining Loan Balance'] = loan_balance
+        row['Investment Contribution (INR)'] = invest_contrib
+        row['Investment Income (INR)'] = investment_income
+        row['Investment Income after Tax (INR)'] = investment_income_after_tax
+        row['Total Investment (INR)'] = investment_balance
+        row['Loan Payment (USD)'] = loan_payment / params['usd_to_inr_rate'] if loan_payment > 0 else 0
+        row['Total Investment (USD)'] = investment_balance / params['usd_to_inr_rate']
+        row['Net Worth (INR)'] = net_worth
 
-    return df
+        df.loc[month] = row
 
-def plot_simulation_results(df, emi):
-    import altair as alt
-    import streamlit as st
+        if loan_balance <= 0:
+            loan_balance = 0
 
-    df_long = df.melt(id_vars='Month', value_vars=['Loan Balance', 'Investment Balance', 'Net Worth'],
-                      var_name='Metric', value_name='Amount')
-
-    chart = alt.Chart(df_long).mark_line().encode(
-        x=alt.X('Month', title='Month', axis=alt.Axis(grid=False)),
-        y=alt.Y('Amount', title='Amount (INR)', axis=alt.Axis(grid=False)),
-        color='Metric',
-        tooltip=['Month', 'Metric', 'Amount']
-    ).properties(
-        title='📊 Loan, Investment & Net Worth Over Time',
-        width=700,
-        height=400
-    ).interactive()
-
-    st.altair_chart(chart, use_container_width=True)
-
-def generate_summary(df, user_input):
-    import streamlit as st
-    final_row = df.iloc[-1]
-    st.write(f"📍 Final Net Worth: ₹{final_row['Net Worth']:,.0f}")
-    st.write(f"📈 Investment Balance: ₹{final_row['Investment Balance']:,.0f}")
-    st.write(f"💸 Remaining Loan Balance: ₹{final_row['Loan Balance']:,.0f}")
-
-# Optional global simulation history
-SIM_HISTORY = []
-
-def store_simulation_run(user_input, final_df):
     summary = {
-        "Strategy": user_input.strategy_type,
-        "% Invest": user_input.percent_to_invest,
-        "Loan Balance": final_df.iloc[-1]['Loan Balance'],
-        "Investment Balance": final_df.iloc[-1]['Investment Balance'],
-        "Net Worth": final_df.iloc[-1]['Net Worth']
+        'final_net_worth': net_worth,
+        'loan_cleared_month': break_even_month,
+        'investment_covers_emi_month': emi_covered_month,
+        'loan_repaid': loan_repaid
     }
-    SIM_HISTORY.append(summary)
-    return pd.DataFrame(SIM_HISTORY)
 
-def optimize_investment(user_input):
-    results = []
-    for pct in range(0, 101, 5):
-        new_input = UserInput(
-            gross_annual_salary_usd=user_input.gross_annual_salary_usd,
-            us_tax_rate=user_input.us_tax_rate,
-            monthly_expenses_usd=user_input.monthly_expenses_usd,
-            loan_amount_inr=user_input.loan_amount_inr,
-            interest_rate_loan=user_input.interest_rate_loan,
-            emi_inr=user_input.emi_inr,
-            moratorium_months=user_input.moratorium_months,
-            loan_term_months=user_input.loan_term_months,
-            investment_rate_annual=user_input.investment_rate_annual,
-            indian_tax_rate=user_input.indian_tax_rate,
-            usd_to_inr_rate=user_input.usd_to_inr_rate,
-            percent_to_invest=pct,
-            years_to_simulate=user_input.years_to_simulate,
-            strategy_type=user_input.strategy_type
-        )
-        df = run_simulation(new_input)
-        final_net_worth = df.iloc[-1]['Net Worth']
-        results.append({"% Invest": pct, "Final Net Worth": final_net_worth})
-    return pd.DataFrame(results)
+    return df, summary
