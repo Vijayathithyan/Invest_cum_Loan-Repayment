@@ -138,8 +138,29 @@ elif tabs == "📈 Strategy Comparison":
 
 # Optimization
 elif tabs == "🔍 Optimization Explorer":
-    st.header("Optimize Savings Split")
-    st.info("🛠 This module will optimize % allocation to investment vs repayment. Coming next!")
+    st.header("🔍 Strategy G – Monte Carlo Simulation")
+    st.markdown("""
+This tool runs Strategy G (Random Split Simulation) multiple times to analyze variability in final outcomes.
+You can explore the distribution of net worth based on unpredictable saving behavior.
+""")
+
+    params = user_inputs()
+    num_runs = st.slider("Number of Simulations", min_value=10, max_value=500, value=100, step=10)
+
+    if st.button("Run Monte Carlo Simulation"):
+        with st.spinner("Running multiple Strategy G simulations..."):
+            from simulation import simulate_multiple_runs
+            df_runs = simulate_multiple_runs(params, runs=num_runs)
+
+            st.success("Simulation complete!")
+
+            st.subheader("📊 Net Worth Distribution")
+            import plotly.express as px
+            fig = px.histogram(df_runs, x='Final Net Worth (INR)', nbins=30, title="Distribution of Final Net Worth")
+            st.plotly_chart(fig, use_container_width=True)
+
+            st.subheader("📋 Summary Statistics")
+            st.write(df_runs['Final Net Worth (INR)'].describe().apply(lambda x: f"₹{x:,.2f}"))
 
 # About
 elif tabs == "ℹ️ About":
