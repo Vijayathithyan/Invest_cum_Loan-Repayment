@@ -1,138 +1,214 @@
-import pandas as pd
 import streamlit as st
-import altair as alt
-from io import BytesIO
-from simulation import UserInput, run_simulation, optimize_investment, SIM_HISTORY, store_simulation_run, plot_simulation_results, generate_summary
+import pandas as pd
+from simulation import UserInput, run_simulation, plot_simulation_results, generate_summary
 
-st.set_page_config(page_title="Investment + Loan Repayment Decision", layout="wide")
-st.title("💼 Investment-Cum-Loan Repayment Simulator")
+st.set_page_config(page_title="Investment & Loan Strategy Simulator", layout="centered")
+st.title("💸 Investment-Cum-Loan Repayment Simulator")
 
-st.markdown("""
-This tool helps international students simulate different strategies to repay education loans and invest savings after graduation.
-You can compare strategies, optimize your savings allocation, and simulate real-life uncertainty like job loss.
-""")
-
-with st.expander("📘 Strategy Descriptions", expanded=True):
+# --- Sidebar Setup ---
+with st.sidebar:
+    st.title("📊 Investment-Cum-Loan Repayment Strategy Simulator")
     st.markdown("""
-    - **Strategy A**: Aggressive loan repayment. 100% of savings go to loan until fully repaid, then switch to investment.
-    - **Strategy B**: Balanced approach. A fixed % of savings is invested, the rest goes toward early loan repayment.
-    - **Strategy C**: Investment-first. During moratorium, invest all savings. After that, split between loan and investment.
-    - **Strategy D**: Delayed aggressive repayment. Invest all savings during moratorium, then aggressively repay loan.
+    This tool helps international students simulate and compare strategies for:
+    - Repaying student loans 💸
+    - Investing monthly savings 📈
+    - Investing commencement time 📅 
+    - Maximizing net worth 💰
+
+    Choose a strategy, enter your assumptions, and simulate outcomes over time.
+
+        🔴 Strategy A – Aggressive Repayment  
+        Use 100% of savings to aggressively repay the loan. No investments until the loan is cleared.
+
+        🟡 Strategy B – Balanced
+        Split your monthly savings between investments and loan repayment based on your chosen percentage.
+
+        🔵 Strategy C – Invest First, Then Balanced  
+        During the moratorium period, invest all your savings. After that, split your savings between investments and repayment.
+
+        🟣 Strategy D – Invest First, Then Aggressive  
+        Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
+
+    ---
     """)
+    st.markdown("👤 **Built by:** Vijayathithyan B B")
+    st.markdown("[🌐 Visit GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)")
+    st.markdown("[🌐 Visit LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BKcWi07NQRG6Oz2TaQyJxug%3D%3D)")
 
-with st.form("user_inputs"):
-    st.markdown("### 📥 Enter Your Inputs")
-    col1, col2 = st.columns(2)
-    with col1:
+
+# Initialize session state for form submission
+if 'form_submitted' not in st.session_state:
+    st.session_state.form_submitted = False
+
+# Define the form
+with st.form("input_form"):
+    with st.expander("💼 Salary & Expense Info", expanded=True):
         gross_salary = st.number_input("Gross Annual Salary (USD)", value=90000, help="Your pre-tax yearly salary expected from your job in the US.")
-        us_tax_rate = st.slider("US Tax Rate (%)", 0, 50, 25, help="Federal, state, and other applicable taxes as a percentage of gross income.")
-        monthly_expenses = st.number_input("Monthly Living Expenses (USD)", value=2000, help="Expected monthly spending excluding loan and investment.")
-        loan_amount = st.number_input("Loan Amount (INR)", value=2000000, help="Total education loan taken in Indian Rupees.")
-        interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, help="Annual interest rate on your education loan.")
-        emi = st.number_input("Monthly EMI (INR)", value=25000, help="Fixed monthly repayment amount once moratorium ends.")
-        moratorium = st.number_input("Moratorium Period (Months)", value=6, help="Months after graduation when EMI is not required.")
-    with col2:
-        loan_term = st.number_input("Total Loan Term (Months)", value=84, help="Full duration of loan repayment as per agreement.")
-        invest_rate = st.number_input("Investment Return Rate (%)", value=12, help="Expected annual return on your investments.")
-        indian_tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 10, help="Tax applicable on investment returns in India.")
-        usd_inr = st.number_input("USD to INR Conversion Rate", value=83.0, help="Estimated exchange rate for converting salary to INR.")
-        pct_invest = st.slider("% of Savings to Invest", 0, 100, 50, help="Portion of post-expense, post-tax savings to invest.")
-        years = st.slider("Years to Simulate", 1, 20, 7, help="Number of years to project into the future.")
-        strategy = st.selectbox("Select Strategy", ["A", "B", "C", "D"], help="Choose a strategy to simulate.")
+        us_tax = st.slider("US Tax Rate (%)", 10, 40, 25, help="Estimated total tax rate (federal + state) applied to your US salary.")
+        expenses = st.number_input("Monthly Living Expenses (USD)", value=2000.0, help="Your monthly personal expenses while living in the US (excluding taxes).")
+        fx_rate = st.number_input("USD to INR Conversion Rate", value=83.5, help="Assumed currency conversion rate from USD to INR.")
 
+    with st.expander("🏦 Loan Details", expanded=True):
+        loan_amt = st.number_input("Education Loan Amount (INR)", value=2500000, help="Total loan amount you borrowed in India, in INR.")
+        interest_rate = st.number_input("Loan Interest Rate (%)", value=10.85, step=0.01, format="%.2f", help="Annual interest rate charged by the bank on your loan.")
+        emi = st.number_input("Monthly EMI (INR)", value=27000, help="Minimum monthly loan payment (EMI) as per the bank schedule.")
+        moratorium = st.slider("Moratorium Period (Months)", 0, 24, 6, help="Months after graduation during which you're not required to repay the loan.")
+        loan_term = st.selectbox("Loan Duration (Months)", [60, 84, 120, 180, 240], help="Total repayment period as per your loan agreement.")
+
+    with st.expander("📈 Investment Details", expanded=True):
+        invest_rate = st.number_input("Investment Return Rate (%)", value=12.0, step=0.1, format="%.2f", help="Estimated annual return percentage on your investments.")
+        tax_rate = st.slider("Indian Tax Rate (%)", 0, 30, 15, help="Tax rate in India applied to gains from your investments.")
+
+    with st.expander("🧪 Strategy Options", expanded=True):
+        st.markdown("### 📘 Strategy Overview")
+        st.markdown("""
+        **🔴 Strategy A – Aggressive Repayment**  
+        Use 100% of savings to aggressively repay the loan. No investments until the loan is cleared.
+
+        **🟡 Strategy B – Balanced**  
+        Split your monthly savings between investments and loan repayment based on your chosen percentage.
+
+        **🔵 Strategy C – Invest First, Then Balanced**  
+        During the moratorium period, invest all your savings. After that, split your savings between investments and repayment.
+
+        **🟣 Strategy D – Invest First, Then Aggressive**  
+        Invest all savings during the moratorium, then use 100% of savings for aggressive loan repayment.
+        """)
+        strategy = st.selectbox("Choose a Strategy", ['A', 'B', 'C', 'D'], index=1)
+        invest_percent = st.slider("Percent of Savings to Invest (%)", 0, 100, 60, help="Out of your monthly savings, how much (%) you want to allocate to investments.")
+
+    with st.expander("⚙️ Simulation Settings", expanded=True):
+        sim_years = st.slider("Number of Years to Simulate", 1, 30, 10, help="Time horizon for the simulation in years after graduation.")
+
+    # Form submission
     submitted = st.form_submit_button("Review Your Inputs")
+    if submitted:
+        st.session_state.form_submitted = True
+        # Store inputs in session state
+        st.session_state.user_inputs = {
+            "Gross Annual Salary (USD)": gross_salary,
+            "US Tax Rate (%)": us_tax,
+            "Monthly Living Expenses (USD)": expenses,
+            "USD to INR Conversion Rate": fx_rate,
+            "Education Loan Amount (INR)": loan_amt,
+            "Loan Interest Rate (%)": interest_rate,
+            "Monthly EMI (INR)": emi,
+            "Moratorium Period (Months)": moratorium,
+            "Loan Duration (Months)": loan_term,
+            "Investment Return Rate (%)": invest_rate,
+            "Indian Tax Rate (%)": tax_rate,
+            "Chosen Strategy": strategy,
+            "Percent of Savings to Invest (%)": invest_percent,
+            "Number of Years to Simulate": sim_years
+        }
 
-if submitted:
-    user_inputs = {
-        "Gross Annual Salary (USD)": gross_salary,
-        "US Tax Rate (%)": us_tax_rate,
-        "Monthly Living Expenses (USD)": monthly_expenses,
-        "Loan Amount (INR)": loan_amount,
-        "Loan Interest Rate (%)": interest_rate,
-        "Monthly EMI (INR)": emi,
-        "Moratorium Period (Months)": moratorium,
-        "Total Loan Term (Months)": loan_term,
-        "Investment Return Rate (%)": invest_rate,
-        "Indian Tax Rate (%)": indian_tax_rate,
-        "USD to INR Conversion Rate": usd_inr,
-        "% of Savings to Invest": pct_invest,
-        "Years to Simulate": years,
-        "Strategy": strategy
-    }
-    st.session_state["user_inputs"] = user_inputs
-    st.success("Inputs recorded. Now start the simulation below!")
+# After form submission, provide download option and simulation
+if st.session_state.form_submitted:
+    st.subheader("📥 Download Your Input Data")
+    input_data = pd.DataFrame([st.session_state.user_inputs])
+    csv_data = input_data.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="Download Input Data as CSV",
+        data=csv_data,
+        file_name='user_input_data.csv',
+        mime='text/csv'
+    )
 
-# --- MAIN SIMULATION ---
-if "user_inputs" in st.session_state:
-    st.markdown("## 🚀 Run Strategy Simulation")
-    if st.button("Start Simulation"):
-        u = st.session_state["user_inputs"]
+    # Start Simulation
+    if st.button("🚀 Start Simulation"):
         user_input = UserInput(
-            gross_annual_salary_usd=u["Gross Annual Salary (USD)"],
-            us_tax_rate=u["US Tax Rate (%)"] / 100,
-            monthly_expenses_usd=u["Monthly Living Expenses (USD)"],
-            loan_amount_inr=u["Loan Amount (INR)"],
-            interest_rate_loan=u["Loan Interest Rate (%)"],
-            emi_inr=u["Monthly EMI (INR)"],
-            moratorium_months=u["Moratorium Period (Months)"],
-            loan_term_months=u["Total Loan Term (Months)"],
-            investment_rate_annual=u["Investment Return Rate (%)"],
-            indian_tax_rate=u["Indian Tax Rate (%)"],
-            usd_to_inr_rate=u["USD to INR Conversion Rate"],
-            percent_to_invest=u["% of Savings to Invest"],
-            years_to_simulate=u["Years to Simulate"],
-            strategy_type=u["Strategy"]
+            gross_annual_salary_usd=st.session_state.user_inputs["Gross Annual Salary (USD)"],
+            us_tax_rate=st.session_state.user_inputs["US Tax Rate (%)"] / 100,
+            monthly_expenses_usd=st.session_state.user_inputs["Monthly Living Expenses (USD)"],
+            loan_amount_inr=st.session_state.user_inputs["Education Loan Amount (INR)"],
+            interest_rate_loan=st.session_state.user_inputs["Loan Interest Rate (%)"],
+            emi_inr=st.session_state.user_inputs["Monthly EMI (INR)"],
+            moratorium_months=st.session_state.user_inputs["Moratorium Period (Months)"],
+            loan_term_months=st.session_state.user_inputs["Loan Duration (Months)"],
+            investment_rate_annual=st.session_state.user_inputs["Investment Return Rate (%)"],
+            indian_tax_rate=st.session_state.user_inputs["Indian Tax Rate (%)"],
+            usd_to_inr_rate=st.session_state.user_inputs["USD to INR Conversion Rate"],
+            percent_to_invest=st.session_state.user_inputs["Percent of Savings to Invest (%)"],
+            years_to_simulate=st.session_state.user_inputs["Number of Years to Simulate"],
+            strategy_type=st.session_state.user_inputs["Chosen Strategy"]
         )
+
         df = run_simulation(user_input)
-        st.success("Simulation complete!")
 
+        st.markdown("## 📈 Simulation Summary")
         generate_summary(df, user_input)
+
+        st.markdown("## 📊 Visualization")
         plot_simulation_results(df, user_input.emi_inr)
+    
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button("Download Simulation Output (CSV)", csv, "simulation_output.csv")
 
-        with BytesIO() as buffer:
-            with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-                df.to_excel(writer, index=False, sheet_name="Simulation")
-            st.download_button("Download Simulation Output (Excel)", buffer.getvalue(), "simulation_output.xlsx")
+        df.to_excel("simulation_output.xlsx", index=False)
+        with open("simulation_output.xlsx", "rb") as f:
+            st.download_button("Download Simulation Output (Excel)", f, "simulation_output.xlsx")
+    
+        # ✅ Save Simulation Run to History (place here!)
+        if "history" not in st.session_state:
+            st.session_state.history = []
+    
+        st.session_state.history.append({
+            "Strategy": user_input.strategy_type,
+            "Years Simulated": user_input.years_to_simulate,
+            "% Invest": user_input.percent_to_invest,
+            "Final Net Worth": df.iloc[-1]["Net Worth"],
+            "Investment Balance": df.iloc[-1]["Investment Balance"],
+            "Loan Balance": df.iloc[-1]["Loan Balance"]
+        })
 
-        store_simulation_run(user_input, df)
+st.markdown("---")
+st.header("🧠 Optimize Your Investment Strategy")
 
-# --- OPTIMIZATION MODULE ---
-if st.sidebar.button("📈 Optimize % to Invest"):
-    st.subheader("💡 Optimization Results")
-    if "user_inputs" in st.session_state:
-        raw = st.session_state["user_inputs"]
+if st.button("🔍 Optimize % to Invest"):
+    optimize_results = []
+
+    for pct in range(0, 105, 5):  # 0 to 100 by 5%
         test_input = UserInput(
-            gross_annual_salary_usd=raw["Gross Annual Salary (USD)"],
-            us_tax_rate=raw["US Tax Rate (%)"] / 100,
-            monthly_expenses_usd=raw["Monthly Living Expenses (USD)"],
-            loan_amount_inr=raw["Loan Amount (INR)"],
-            interest_rate_loan=raw["Loan Interest Rate (%)"],
-            emi_inr=raw["Monthly EMI (INR)"],
-            moratorium_months=raw["Moratorium Period (Months)"],
-            loan_term_months=raw["Total Loan Term (Months)"],
-            investment_rate_annual=raw["Investment Return Rate (%)"],
-            indian_tax_rate=raw["Indian Tax Rate (%)"],
-            usd_to_inr_rate=raw["USD to INR Conversion Rate"],
-            percent_to_invest=raw["% of Savings to Invest"],
-            years_to_simulate=raw["Years to Simulate"],
-            strategy_type=raw["Strategy"]
+            gross_annual_salary_usd=st.session_state.user_inputs["Gross Annual Salary (USD)"],
+            us_tax_rate=st.session_state.user_inputs["US Tax Rate (%)"] / 100,
+            monthly_expenses_usd=st.session_state.user_inputs["Monthly Living Expenses (USD)"],
+            loan_amount_inr=st.session_state.user_inputs["Education Loan Amount (INR)"],
+            interest_rate_loan=st.session_state.user_inputs["Loan Interest Rate (%)"],
+            emi_inr=st.session_state.user_inputs["Monthly EMI (INR)"],
+            moratorium_months=st.session_state.user_inputs["Moratorium Period (Months)"],
+            loan_term_months=st.session_state.user_inputs["Loan Duration (Months)"],
+            investment_rate_annual=st.session_state.user_inputs["Investment Return Rate (%)"],
+            indian_tax_rate=st.session_state.user_inputs["Indian Tax Rate (%)"],
+            usd_to_inr_rate=st.session_state.user_inputs["USD to INR Conversion Rate"],
+            percent_to_invest=pct,
+            years_to_simulate=st.session_state.user_inputs["Number of Years to Simulate"],
+            strategy_type=st.session_state.user_inputs["Chosen Strategy"]
         )
 
-        opt_df = optimize_investment(test_input)
-        chart = alt.Chart(opt_df).mark_line(point=True).encode(
-            x=alt.X('% Invest'),
-            y=alt.Y('Final Net Worth'),
-            tooltip=['% Invest', 'Final Net Worth']
-        ).properties(
-            title='Final Net Worth vs % of Savings Invested',
-            width=700, height=400
-        ).interactive()
-        st.altair_chart(chart, use_container_width=True)
-        st.download_button("Download Optimization Results (CSV)", opt_df.to_csv(index=False), "optimization_output.csv")
-    else:
-        st.warning("Please enter your input data first by starting a simulation.")
+        df_opt = run_simulation(test_input)
+        final_net_worth = df_opt.iloc[-1]["Net Worth"]
+        optimize_results.append({"% Invest": pct, "Net Worth": final_net_worth})
 
-# --- SIMULATION HISTORY ---
-if len(SIM_HISTORY) > 0:
-    st.subheader("📜 Simulation History")
-    st.dataframe(pd.DataFrame(SIM_HISTORY))
+    opt_df = pd.DataFrame(optimize_results)
+
+    best_row = opt_df.loc[opt_df["Net Worth"].idxmax()]
+    best_pct = best_row["% Invest"]
+    best_value = best_row["Net Worth"]
+
+    st.success(f"💡 Best % to Invest: **{best_pct}%** — Final Net Worth: ₹{best_value:,.0f}")
+    st.line_chart(opt_df.set_index("% Invest"))
+
+# --- Simulation History View ---
+if "history" in st.session_state and st.session_state.history:
+    st.markdown("---")
+    st.header("📜 Simulation History")
+
+    hist_df = pd.DataFrame(st.session_state.history)
+    st.dataframe(hist_df)
+
+    csv_hist = hist_df.to_csv(index=False).encode("utf-8")
+    st.download_button("📥 Download History (CSV)", csv_hist, "simulation_history.csv")
+
+    hist_df.to_excel("simulation_history.xlsx", index=False)
+    with open("simulation_history.xlsx", "rb") as f:
+        st.download_button("📥 Download History (Excel)", f, "simulation_history.xlsx")
