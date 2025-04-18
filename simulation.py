@@ -153,4 +153,26 @@ def simulate_multiple_runs(params, runs=100):
             'Final Net Worth (INR)': summary['final_net_worth']
         })
     return pd.DataFrame(results)
+def optimize_investment_split(params, step=5):
+    """
+    Simulate strategies B or C over different investment % splits (0% to 100%) 
+    to find the allocation that maximizes final net worth.
+    """
+    results = []
+    strategy = params.get("strategy", "B")
+
+    if strategy not in ["B", "C"]:
+        return pd.DataFrame()  # Only optimize for B or C
+
+    for invest_pct in range(0, 101, step):
+        test_params = params.copy()
+        test_params["percent_to_invest"] = invest_pct
+        test_params["strategy"] = strategy
+        df, summary = simulate_strategy(test_params)
+        results.append({
+            "Investment %": invest_pct,
+            "Final Net Worth": summary["final_net_worth"]
+        })
+
+    return pd.DataFrame(results)
 
