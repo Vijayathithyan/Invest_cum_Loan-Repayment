@@ -33,6 +33,9 @@ def simulate_strategy(params):
 
     for month in df.index:
         row = {}
+        invest_contrib = 0
+        extra_payment = 0
+        loan_payment = 0
         is_moratorium = month <= moratorium
 
         # Interest added to loan
