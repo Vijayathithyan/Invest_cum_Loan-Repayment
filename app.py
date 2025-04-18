@@ -9,7 +9,7 @@ st.set_page_config(page_title="Investment vs Loan Repayment", layout="wide")
 
 # Sidebar navigation
 st.sidebar.header("Navigation")
-tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "ℹ️ About"])
+tabs = st.sidebar.radio("Go to:", ["🏠 Home", "🏃‍♂️ Run Simulation", "📈 Strategy Comparison", "🔍 Optimization Explorer", "📊 Strategy G (Monte Carlo)", "ℹ️ About"])
 
 # Common Input Section
 
@@ -136,9 +136,9 @@ elif tabs == "📈 Strategy Comparison":
     st.header("Compare Multiple Strategies")
     st.info("🛠 This module will allow running multiple strategies side-by-side. Coming next!")
 
-# Optimization
-elif tabs == "🔍 Optimization Explorer":
-    st.header("🔍 Strategy G – Monte Carlo Simulation")
+# Strategy G (Monte Carlo)
+elif tabs == "📊 Strategy G (Monte Carlo)":
+    st.header("🎲 Monte Carlo Simulation – Strategy G")
     st.markdown("""
 This tool runs Strategy G (Random Split Simulation) multiple times to analyze variability in final outcomes.
 You can explore the distribution of net worth based on unpredictable saving behavior.
@@ -175,6 +175,16 @@ You can explore the distribution of net worth based on unpredictable saving beha
             
             👉 In simple terms: Even if you don't follow a fixed savings plan, you'll likely end up between ₹{desc['25%']:,.0f} and ₹{desc['75%']:,.0f}, assuming similar income and loan conditions.
             """)
+
+# Optimization Explorer
+
+elif tabs == "🔍 Optimization Explorer":
+    st.header("🔍 Optimization Explorer")
+    st.markdown("""
+This tool helps find the **optimal savings split** between loan repayment and investment (for strategies B and C) that will **maximize your final net worth**.
+
+You can simulate different allocation percentages and select the one that gives the best result.
+""")
 
 # About
 elif tabs == "ℹ️ About":
