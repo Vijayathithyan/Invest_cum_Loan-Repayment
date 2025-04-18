@@ -88,24 +88,28 @@ elif tabs == "🏃‍♂️ Run Simulation":
 - **🟠 Strategy F – Risk-Aware:** Allocation varies monthly based on job security or investment volatility.
         """)
 
-with st.expander("Standard Strategies"):
-    strategy_std = st.radio("Choose a Standard Strategy", [
-        "A - Aggressive Repayment",
-        "B - Balanced",
-        "C - Invest First, Then Balanced",
-        "D - Invest First, Then Aggressive",
-        "E - Dynamic Allocation"
-    ], key="standard_strategy")
+        st.subheader("🧠 Select Your Strategy")
+        
+        with st.expander("Standard Strategies", expanded=True):
+            strategy_std = st.radio("Choose a Standard Strategy", [
+                "A - Aggressive Repayment",
+                "B - Balanced",
+                "C - Invest First, Then Balanced",
+                "D - Invest First, Then Aggressive",
+                "E - Dynamic Allocation"
+            ], key="strategy_std")
+        
+        with st.expander("Advanced Strategies (for experienced users)"):
+            strategy_adv = st.radio("Choose an Advanced Strategy", [
+                "F - Risk-Aware Allocation",
+                "G - Random Split Simulation"
+            ], key="strategy_adv")
 
-with st.expander("Advanced Strategies (for experienced users)"):
-    strategy_adv = st.radio("Choose an Advanced Strategy", [
-        "F - Risk-Aware Allocation",
-        "G - Random Split Simulation"
-    ], key="advanced_strategy")
-
-# Determine selected strategy
+# Strategy priority: Standard first, else advanced
 strategy = strategy_std if strategy_std else strategy_adv
-params['strategy'] = strategy[0]  # Extract strategy code
+strategy_code = strategy[0]
+params['strategy'] = strategy_code
+
 
 
     if strategy_code in ['B', 'C']:
