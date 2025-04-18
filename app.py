@@ -145,7 +145,7 @@ You can explore the distribution of net worth based on unpredictable saving beha
 """)
 
     params = user_inputs()
-    num_runs = st.slider("Number of Simulations", min_value=10, max_value=500, value=100, step=10)
+    num_runs = st.slider("Number of Simulations", min_value=10, max_value=1000, value=100, step=10)
 
     if st.button("Run Monte Carlo Simulation"):
         with st.spinner("Running multiple Strategy G simulations..."):
