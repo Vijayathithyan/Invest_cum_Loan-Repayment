@@ -155,6 +155,6 @@ Vijay is passionate about applying decision science to real-world financial dile
 
 When not crunching numbers or designing tools, Vijay is actively involved in mentoring youth initiatives, co-founding creative workshops, and volunteering for economic development projects in his hometown.
 
-📫 [Connect on LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
-🔗 [GitHub Repository](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
+📫 [LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
+🔗 [GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
     """)
