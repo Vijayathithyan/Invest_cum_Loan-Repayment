@@ -151,5 +151,6 @@ This app helps international students or professionals simulate different strate
 loan repayments and investments after graduation.
 
 Built using **Python**, **Pandas**, **Streamlit**, and **Plotly**.
-GitHub: [Invest-Cum-Loan-Repayment](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
+GitHub: [Invest-Cum-Loan-Repayment](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment),
+LinkedIn: [Vijayathithyan B B] (https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3B95mB2C2sQ32C1oIRESd9uA%3D%3D)
 """)
