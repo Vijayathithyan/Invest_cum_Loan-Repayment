@@ -82,9 +82,20 @@ and investing in Indian financial instruments.
 - See how different strategies affect your net worth.
 - Compare strategies side-by-side.
 - Use optimization to find the best savings split.
-
 Use the navigation sidebar to begin your simulation.
 """)
+
+    st.subheader("🧠 Strategy Selection")
+        with st.expander("Click to View Strategy Descriptions"):
+        st.markdown("""
+- **🔴 Strategy A – Aggressive Repayment:** All savings go toward loan until it is cleared.
+- **🟡 Strategy B – Balanced:** Split monthly savings between investment and repayment (default 50:50).
+- **🔵 Strategy C – Invest First, Then Balanced:** Invest during moratorium, then apply Strategy B.
+- **🔸 Strategy D – Invest First, Then Aggressive:** Invest during moratorium, then repay loan aggressively.
+- **🟢 Strategy E – Dynamic Allocation:** Repay until X% loan cleared, then invest fully.
+- **🟠 Strategy F – Risk-Aware:** Allocation varies monthly based on job security or investment volatility.
+- **🟣 Strategy G – Random Split Simulation:** Each month, the savings split between investment and repayment is randomized. This allows users to explore how unpredictable behavior might impact final outcomes.
+        """)
 
 # -------------------- RUN SIMULATION --------------------
 elif tabs == "🏃‍♂️ Run Simulation":
