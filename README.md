@@ -37,13 +37,10 @@ This simulator models various financial strategies to help users:
 - `pandas`, `numpy`, `plotly` – Backend simulation & visualization
 - Hosted on **Streamlit Cloud**
 
----
+🧠 Inspiration
+This tool was inspired by my own experience navigating student loan repayment decisions as an international student in the U.S. I wanted to build something that could benefit others facing similar challenges — balancing debt, investments, and uncertainty.
 
-## 📷 Screenshots
-
-<img src="assets/screenshot1.png" width="700">
-
----
-
-## 📁 Folder Structure
+👤 Author
+Vijayathithyan B B
+📍 Master’s in Decision Analytics – Virginia Commonwealth University
 
