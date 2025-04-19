@@ -111,7 +111,11 @@ elif tabs == "🏃‍♂️ Run Simulation":
         st.plotly_chart(fig, use_container_width=True)
 
         st.subheader("📋 Final Summary")
-        st.write(summary)
+        summary_df = pd.DataFrame(summary, index=["Value"]).T
+        summary_df.columns = ["Value"]
+        summary_df["Value"] = summary_df["Value"].apply(lambda x: f"₹{x:,.2f}" if isinstance(x, float) else x)
+        st.dataframe(summary_df)
+
 
         st.subheader("📄 Detailed Monthly Table")
         st.dataframe(df)
