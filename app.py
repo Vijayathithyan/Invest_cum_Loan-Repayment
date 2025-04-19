@@ -136,36 +136,6 @@ elif tabs == "🏃‍♂️ Run Simulation":
         st.dataframe(df)
         st.download_button("Download Results", data=df.to_csv().encode(), file_name="simulation_output.csv")
 # -------------------- STRATEGY COMPARISION --------------------
-elif tabs == "📈 Strategy Comparison":
-    st.header("📊 Strategy Comparison")
-
-    selected_strategies = st.multiselect(
-        "Select Strategies to Compare",
-        options=["A", "B", "C", "D", "E", "F"],
-        default=["A", "B", "C"]
-    )
-
-    if st.button("Compare Strategies"):
-        from simulation import compare_strategies
-        df_compare = compare_strategies(params, selected_strategies)
-
-        if df_compare.empty:
-            st.warning("⚠️ No results could be generated. Please review your inputs or try fewer strategies.")
-        else:
-            st.subheader("📋 Summary Table")
-            df_display = df_compare.copy()
-            df_display["Final Net Worth"] = df_display["Final Net Worth"].apply(lambda x: f"₹{x:,.0f}")
-            df_display["Final Investment Balance"] = df_display["Final Investment Balance"].apply(lambda x: f"₹{x:,.0f}")
-            st.dataframe(df_display)
-
-            st.subheader("📊 Net Worth by Strategy")
-            fig = px.bar(df_compare, x="Strategy", y="Final Net Worth", text_auto=".2s")
-            st.plotly_chart(fig, use_container_width=True)
-
-            st.subheader("📈 Loan Clearance Timeline")
-            fig2 = px.bar(df_compare, x="Strategy", y="Loan Cleared In (Months)", text_auto=True)
-            st.plotly_chart(fig2, use_container_width=True)
-
 # ---------------- SMART RECOMMENDATION ----------------
 st.subheader("🧠 Smart Recommendation")
 
@@ -193,8 +163,6 @@ try:
 
 except Exception as e:
     st.error(f"Smart recommendation failed: {e}")
-
-
 
 # -------------------- STRATEGY G – MONTE CARLO --------------------
 elif tabs == "📊 Strategy G (Monte Carlo)":
