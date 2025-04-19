@@ -11,18 +11,20 @@ def apply_tax(value, annual_tax_rate):
 
 def simulate_strategy(params):
     months = params['years'] * 12
-    monthly_savings_usd = calculate_monthly_savings(
-        params['gross_annual_salary_usd'],
-        params['us_tax_rate'],
-        params['monthly_expenses_usd']
-    )
-    monthly_savings_inr = monthly_savings_usd * params['usd_to_inr_rate']
-    
     investment_balance = 0
     loan_balance = params['loan_amount_inr']
     emi = params['emi_inr']
 
     results = []
+
+    # Scenario Engine Setup
+    fx_rate = params["usd_to_inr_rate"]
+    expenses = params["monthly_expenses_usd"]
+
+    # Job loss scenario
+    job_loss_start = params.get("job_loss_start", None)
+    job_loss_end = job_loss_start + params["job_loss_duration"] if params.get("enable_job_loss") else None
+    income_recovery_rate = params.get("income_recovery_rate", 100) / 100  # 100% by default
 
     for month in range(1, months + 1):
         row = {}
@@ -30,8 +32,25 @@ def simulate_strategy(params):
         extra_payment = 0
         loan_payment = emi
         strategy = params['strategy']
-        
         in_moratorium = month <= params['moratorium_months']
+
+        # Apply FX drift
+        if params.get("enable_fx_drift"):
+            fx_rate *= (1 + params.get("fx_drift_rate", 0) / 12)
+
+        # Apply inflation
+        if params.get("enable_inflation"):
+            expenses *= (1 + params.get("inflation_rate", 0) / 12)
+
+        # Apply job loss
+        if params.get("enable_job_loss") and job_loss_start <= month <= job_loss_end:
+            effective_salary = params["gross_annual_salary_usd"] * income_recovery_rate
+        else:
+            effective_salary = params["gross_annual_salary_usd"]
+
+        monthly_income = (effective_salary / 12) * (1 - params["us_tax_rate"])
+        monthly_savings_usd = monthly_income - expenses
+        monthly_savings_inr = monthly_savings_usd * fx_rate
 
         # STRATEGY LOGIC
         if strategy == "A":  # Aggressive Repayment
@@ -51,7 +70,8 @@ def simulate_strategy(params):
             else:
                 extra_payment = monthly_savings_inr
         elif strategy == "E":  # Dynamic Allocation
-            if loan_balance > (params['loan_amount_inr'] * (1 - params['threshold_pct'] / 100)):
+            threshold = params['loan_amount_inr'] * (1 - params['threshold_pct'] / 100)
+            if loan_balance > threshold:
                 extra_payment = monthly_savings_inr
             else:
                 invest_contrib = monthly_savings_inr
@@ -91,6 +111,7 @@ def simulate_strategy(params):
 
     return df, summary
 
+
 def simulate_multiple_runs(params, runs=100):
     results = []
     for i in range(runs):
@@ -102,6 +123,7 @@ def simulate_multiple_runs(params, runs=100):
             'Final Net Worth (INR)': summary['final_net_worth']
         })
     return pd.DataFrame(results)
+
 
 def optimize_investment_split(params, step=5):
     strategy = params.get("strategy", "B")
@@ -120,6 +142,7 @@ def optimize_investment_split(params, step=5):
         })
 
     return pd.DataFrame(results)
+
 
 def compare_strategies(params, strategies):
     results = []
@@ -140,4 +163,3 @@ def compare_strategies(params, strategies):
             continue
 
     return pd.DataFrame(results)
-
