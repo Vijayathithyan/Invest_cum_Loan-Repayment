@@ -68,8 +68,22 @@ params = {
 if tabs == "🏠 Home":
     st.title("📊 Investment-Cum-Loan Repayment Simulator")
     st.markdown("""
-This tool helps you make smarter financial decisions on repaying your loan versus investing your savings. 
-Choose from multiple strategies, simulate outcomes over time, and optimize based on your goals.
+Welcome to the **Investment-Cum-Loan Repayment Simulator**! This tool is designed to help you
+make informed decisions about how to allocate your monthly savings between repaying a student loan
+and investing in Indian financial instruments.
+
+### How It Works:
+- Enter your income, loan, and investment details.
+- Choose a strategy: from aggressive repayment to balanced investing.
+- Run a month-by-month simulation for up to 30 years.
+- Get insights on your final net worth, break-even point, and investment coverage.
+
+### Benefits:
+- See how different strategies affect your net worth.
+- Compare strategies side-by-side.
+- Use optimization to find the best savings split.
+
+Use the navigation sidebar to begin your simulation.
 """)
 
 # -------------------- RUN SIMULATION --------------------
@@ -169,14 +183,18 @@ This tool helps you find the **optimal savings split** between loan repayment an
 - 💰 **Final Net Worth:** ₹{best_row['Final Net Worth']:,.0f}
 """)
 
-# -------------------- ABOUT --------------------
+# About
 elif tabs == "ℹ️ About":
     st.header("👤 About the Author")
     st.markdown("""
-**Vijayathithyan B B** is a graduate student at Virginia Commonwealth University, pursuing a Master’s in Decision Analytics with a concentration in Accounting Analytics.
+**Vijayathithyan B B** is a graduate student at **Virginia Commonwealth University**, pursuing a Master’s in Decision Analytics with a concentration in Accounting Analytics. With a background in auditing and financial risk assessment, Vijay brings together technical expertise in **Python, SQL, and data analytics** with real-world experience in **SOX compliance, internal controls, and forensic accounting**.
 
-He combines experience in internal audit, financial analytics, and decision science to create data-driven tools that support real-life financial choices — especially for international students.
+Before transitioning into analytics, he served as a Senior Auditor in India, where he led business development, built audit automation tools, and managed regulatory compliance for growing firms. He is also a **CPA-eligible** professional with multiple postgraduate degrees in **Accounting and Finance**.
 
-🔗 [LinkedIn Profile](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
-📂 [GitHub Repository](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
-""")
+Vijay is passionate about applying decision science to real-world financial dilemmas — especially those faced by international students like himself. This app was created from personal experience, aiming to simplify complex investment and repayment decisions through interactive simulation and data-driven strategy.
+
+When not crunching numbers or designing tools, Vijay is actively involved in mentoring youth initiatives, co-founding creative workshops, and volunteering for economic development projects in his hometown.
+
+📫 [LinkedIn](https://www.linkedin.com/in/vijayathithyan-b-b-ba0b50244/)  
+🔗 [GitHub](https://github.com/Vijayathithyan/Invest_cum_Loan-Repayment)
+    """)
