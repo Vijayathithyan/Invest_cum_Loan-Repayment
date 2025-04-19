@@ -45,6 +45,20 @@ invest_pct = st.sidebar.slider("Investment % of Savings", 0, 100, 50)
 threshold_pct = st.sidebar.slider("Loan Repayment Threshold % (Strategy E)", 0, 100, 50)
 risk_type = st.sidebar.selectbox("Risk Driver (Strategy F)", ["Job Security", "Investment Volatility"])
 
+st.sidebar.subheader("🧪 Scenario Engine")
+
+enable_job_loss = st.sidebar.checkbox("📉 Simulate Job Loss", value=False)
+job_loss_start = st.sidebar.slider("Month of Job Loss", 1, 60, 24) if enable_job_loss else None
+job_loss_duration = st.sidebar.slider("Job Loss Duration (Months)", 1, 24, 6) if enable_job_loss else None
+income_recovery_rate = st.sidebar.slider("Income Recovery After Job Loss (%)", 0, 100, 50) if enable_job_loss else None
+
+enable_inflation = st.sidebar.checkbox("📈 Apply Inflation to Expenses", value=False)
+inflation_rate = st.sidebar.slider("Annual Inflation Rate (%)", 0, 20, 6) / 100 if enable_inflation else 0
+
+enable_fx_drift = st.sidebar.checkbox("🌍 Simulate Currency Drift (USD→INR)", value=False)
+fx_drift_rate = st.sidebar.slider("Annual USD→INR Drift Rate (%)", -10, 10, -3) / 100 if enable_fx_drift else 0
+
+
 params = {
     'years': years,
     'graduation_month': grad_month,
@@ -61,7 +75,16 @@ params = {
     'usd_to_inr_rate': fx,
     'percent_to_invest': invest_pct,
     'threshold_pct': threshold_pct,
-    'risk_type': risk_type
+    'risk_type': risk_type,
+    'enable_job_loss': enable_job_loss,
+    'job_loss_start': job_loss_start,
+    'job_loss_duration': job_loss_duration,
+    'income_recovery_rate': income_recovery_rate,
+    'enable_inflation': enable_inflation,
+    'inflation_rate': inflation_rate,
+    'enable_fx_drift': enable_fx_drift,
+    'fx_drift_rate': fx_drift_rate
+
 }
 
 # -------------------- HOME --------------------
