@@ -122,20 +122,22 @@ def optimize_investment_split(params, step=5):
     return pd.DataFrame(results)
 
 def compare_strategies(params, strategies):
-    """
-    Simulate multiple strategies using the same inputs and return a comparison table.
-    """
     results = []
 
     for strategy_code in strategies:
-        test_params = params.copy()
-        test_params["strategy"] = strategy_code
-        df, summary = simulate_strategy(test_params)
-        results.append({
-            "Strategy": strategy_code,
-            "Final Net Worth": summary["final_net_worth"],
-            "Loan Cleared In (Months)": summary["months_to_clear_loan"],
-            "Final Investment Balance": summary["final_investment_balance"]
-        })
+        try:
+            test_params = params.copy()
+            test_params["strategy"] = strategy_code
+            df, summary = simulate_strategy(test_params)
+            results.append({
+                "Strategy": strategy_code,
+                "Final Net Worth": summary["final_net_worth"],
+                "Loan Cleared In (Months)": summary["months_to_clear_loan"],
+                "Final Investment Balance": summary["final_investment_balance"]
+            })
+        except Exception as e:
+            print(f"❌ Failed to simulate strategy {strategy_code}: {e}")
+            continue
 
     return pd.DataFrame(results)
+
