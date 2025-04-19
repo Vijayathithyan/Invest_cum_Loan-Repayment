@@ -149,21 +149,22 @@ elif tabs == "📈 Strategy Comparison":
         from simulation import compare_strategies
         df_compare = compare_strategies(params, selected_strategies)
 
-        st.subheader("📋 Summary Table")
-        df_display = df_compare.copy()
-        df_display["Final Net Worth"] = df_display["Final Net Worth"].apply(lambda x: f"₹{x:,.0f}")
-        df_display["Final Investment Balance"] = df_display["Final Investment Balance"].apply(lambda x: f"₹{x:,.0f}")
-        st.dataframe(df_display)
+        if df_compare.empty:
+            st.warning("⚠️ No results could be generated. Please review your inputs or try fewer strategies.")
+        else:
+            st.subheader("📋 Summary Table")
+            df_display = df_compare.copy()
+            df_display["Final Net Worth"] = df_display["Final Net Worth"].apply(lambda x: f"₹{x:,.0f}")
+            df_display["Final Investment Balance"] = df_display["Final Investment Balance"].apply(lambda x: f"₹{x:,.0f}")
+            st.dataframe(df_display)
 
-        st.subheader("📊 Net Worth by Strategy")
-        fig = px.bar(df_compare, x="Strategy", y="Final Net Worth", text_auto=".2s")
-        st.plotly_chart(fig, use_container_width=True)
+            st.subheader("📊 Net Worth by Strategy")
+            fig = px.bar(df_compare, x="Strategy", y="Final Net Worth", text_auto=".2s")
+            st.plotly_chart(fig, use_container_width=True)
 
-        st.subheader("📈 Loan Clearance Timeline")
-        fig2 = px.bar(df_compare, x="Strategy", y="Loan Cleared In (Months)", text_auto=True)
-        st.plotly_chart(fig2, use_container_width=True)
-
-
+            st.subheader("📈 Loan Clearance Timeline")
+            fig2 = px.bar(df_compare, x="Strategy", y="Loan Cleared In (Months)", text_auto=True)
+            st.plotly_chart(fig2, use_container_width=True)
 
 # -------------------- STRATEGY G – MONTE CARLO --------------------
 elif tabs == "📊 Strategy G (Monte Carlo)":
