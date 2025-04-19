@@ -17,24 +17,24 @@ def simulate_strategy(params):
         job_loss_start = params.get("job_loss_start", 0)
         job_loss_end = job_loss_start + params.get("job_loss_duration", 0)
         income_recovery = params.get("income_recovery_rate", 0) / 100
-# Apply currency fluctuation
-if params.get("enable_fx_drift"):
-    fx_rate *= (1 + params["fx_drift_rate"] / 12)
-
-# Apply inflation to expenses
-if params.get("enable_inflation"):
-    expenses *= (1 + params["inflation_rate"] / 12)
-
-# Apply job loss
-if job_loss_enabled and job_loss_start <= month <= job_loss_end:
-    effective_salary = params["gross_annual_salary_usd"] * income_recovery
-else:
-    effective_salary = params["gross_annual_salary_usd"]
-
-# Recalculate monthly savings
-monthly_income = (effective_salary / 12) * (1 - params["us_tax_rate"])
-monthly_savings_usd = monthly_income - expenses
-monthly_savings_inr = monthly_savings_usd * fx_rate
+    # Apply currency fluctuation
+    if params.get("enable_fx_drift"):
+        fx_rate *= (1 + params["fx_drift_rate"] / 12)
+    
+    # Apply inflation to expenses
+    if params.get("enable_inflation"):
+        expenses *= (1 + params["inflation_rate"] / 12)
+    
+    # Apply job loss
+    if job_loss_enabled and job_loss_start <= month <= job_loss_end:
+        effective_salary = params["gross_annual_salary_usd"] * income_recovery
+    else:
+        effective_salary = params["gross_annual_salary_usd"]
+    
+    # Recalculate monthly savings
+    monthly_income = (effective_salary / 12) * (1 - params["us_tax_rate"])
+    monthly_savings_usd = monthly_income - expenses
+    monthly_savings_inr = monthly_savings_usd * fx_rate
     
     investment_balance = 0
     loan_balance = params['loan_amount_inr']
