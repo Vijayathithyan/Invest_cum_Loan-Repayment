@@ -120,18 +120,20 @@ Use the navigation sidebar to begin your simulation.
 - **🟠 Strategy F – Risk-Aware:** Allocation varies monthly based on job security or investment volatility.
 - **🟣 Strategy G – Random Split Simulation:** Each month, the savings split between investment and repayment is randomized. This allows users to explore how unpredictable behavior might impact final outcomes.
         """)
-     st.subheader("🧪 Scenario Engine")
-        st.markdown("""
-            The Scenario Engine simulates **real-world risks** like:
-            
-            - 📉 **Job Loss**: Income drops temporarily during unemployment.
-            - 📈 **Inflation**: Monthly expenses increase gradually each year.
-            - 🌍 **Currency Fluctuation**: USD→INR rate drifts, impacting investment conversion.
-            
-            These risks are optional but provide more realistic results. Enable them in the sidebar before running a simulation.
-            """)
+
+    st.subheader("🧪 Scenario Engine")
+    st.markdown("""
+The Scenario Engine simulates **real-world risks** like:
+
+- 📉 **Job Loss**: Income drops temporarily during unemployment.
+- 📈 **Inflation**: Monthly expenses increase gradually each year.
+- 🌍 **Currency Fluctuation**: USD→INR rate drifts, impacting investment conversion.
+
+These risks are optional but provide more realistic results. Enable them in the sidebar before running a simulation.
+    """)
+
     if params.get("enable_job_loss") or params.get("enable_inflation") or params.get("enable_fx_drift"):
-    st.warning("⚠️ Scenario Engine is active: Results may reflect job loss, inflation, or currency fluctuation risks.")
+        st.warning("⚠️ Scenario Engine is active: Results may reflect job loss, inflation, or currency fluctuation risks.")
 
 # -------------------- RUN SIMULATION --------------------
 elif tabs == "🏃‍♂️ Run Simulation":
