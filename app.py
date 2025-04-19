@@ -113,7 +113,11 @@ elif tabs == "🏃‍♂️ Run Simulation":
         st.subheader("📋 Final Summary")
         summary_df = pd.DataFrame(summary, index=["Value"]).T
         summary_df.columns = ["Value"]
-        summary_df["Value"] = summary_df["Value"].apply(lambda x: f"₹{x:,.2f}" if isinstance(x, float) else x)
+        def format_summary_value(index, value):
+            if index in ['final_net_worth', 'final_loan_balance', 'final_investment_balance']:
+                return f"₹{value:,.2f}"
+            else:
+                return f"{value:.0f}"
         st.dataframe(summary_df)
 
 
