@@ -166,15 +166,16 @@ elif tabs == "📈 Strategy Comparison":
             fig2 = px.bar(df_compare, x="Strategy", y="Loan Cleared In (Months)", text_auto=True)
             st.plotly_chart(fig2, use_container_width=True)
 
-            # ---------------- SMART RECOMMENDATION ----------------
-    st.subheader("🧠 Smart Recommendation")
-    
-    # Best Net Worth Strategy
+# ---------------- SMART RECOMMENDATION ----------------
+st.subheader("🧠 Smart Recommendation")
+
+# Use numeric DataFrame (not formatted one)
+try:
     best_net_worth_row = df_compare.loc[df_compare["Final Net Worth"].idxmax()]
     strategy_net = best_net_worth_row["Strategy"]
     net_value = best_net_worth_row["Final Net Worth"]
-    
-    # Fastest Loan Clearance Strategy
+
+    # Fastest Loan Clearance Strategy (excluding "Not Cleared")
     filtered_df = df_compare[df_compare["Loan Cleared In (Months)"] != "Not Cleared"]
     if not filtered_df.empty:
         fastest_loan_row = filtered_df.loc[filtered_df["Loan Cleared In (Months)"].astype(int).idxmin()]
@@ -183,12 +184,16 @@ elif tabs == "📈 Strategy Comparison":
     else:
         strategy_loan = "N/A"
         loan_months = "No strategy cleared the loan"
-    
-    # Display Recommendations
+
+    # Display
     st.markdown(f"""
     - 🥇 **Highest Net Worth**: Strategy **{strategy_net}** with ₹{net_value:,.0f}  
     - ⏱️ **Fastest Loan Payoff**: Strategy **{strategy_loan}** in **{loan_months} months**
     """)
+
+except Exception as e:
+    st.error(f"Smart recommendation failed: {e}")
+
 
 
 # -------------------- STRATEGY G – MONTE CARLO --------------------
