@@ -136,33 +136,68 @@ elif tabs == "🏃‍♂️ Run Simulation":
         st.dataframe(df)
         st.download_button("Download Results", data=df.to_csv().encode(), file_name="simulation_output.csv")
 # -------------------- STRATEGY COMPARISION --------------------
-# ---------------- SMART RECOMMENDATION ----------------
-st.subheader("🧠 Smart Recommendation")
+elif tabs == "📈 Strategy Comparison":
+    st.header("📊 Strategy Comparison")
 
-# Use numeric DataFrame (not formatted one)
-try:
-    best_net_worth_row = df_compare.loc[df_compare["Final Net Worth"].idxmax()]
-    strategy_net = best_net_worth_row["Strategy"]
-    net_value = best_net_worth_row["Final Net Worth"]
+    selected_strategies = st.multiselect(
+        "Select Strategies to Compare",
+        options=["A", "B", "C", "D", "E", "F"],
+        default=["A", "B", "C"]
+    )
 
-    # Fastest Loan Clearance Strategy (excluding "Not Cleared")
-    filtered_df = df_compare[df_compare["Loan Cleared In (Months)"] != "Not Cleared"]
-    if not filtered_df.empty:
-        fastest_loan_row = filtered_df.loc[filtered_df["Loan Cleared In (Months)"].astype(int).idxmin()]
-        strategy_loan = fastest_loan_row["Strategy"]
-        loan_months = fastest_loan_row["Loan Cleared In (Months)"]
-    else:
-        strategy_loan = "N/A"
-        loan_months = "No strategy cleared the loan"
+    if st.button("Compare Strategies"):
+        from simulation import compare_strategies
+        df_compare = compare_strategies(params, selected_strategies)
 
-    # Display
-    st.markdown(f"""
-    - 🥇 **Highest Net Worth**: Strategy **{strategy_net}** with ₹{net_value:,.0f}  
-    - ⏱️ **Fastest Loan Payoff**: Strategy **{strategy_loan}** in **{loan_months} months**
-    """)
+        if df_compare.empty:
+            st.warning("⚠️ No results could be generated. Please review your inputs or try fewer strategies.")
+        else:
+            st.subheader("📋 Summary Table")
+            df_display = df_compare.copy()
+            df_display["Final Net Worth"] = df_display["Final Net Worth"].apply(lambda x: f"₹{x:,.0f}")
+            df_display["Final Investment Balance"] = df_display["Final Investment Balance"].apply(lambda x: f"₹{x:,.0f}")
+            st.dataframe(df_display)
 
-except Exception as e:
-    st.error(f"Smart recommendation failed: {e}")
+            st.subheader("📊 Net Worth by Strategy")
+            fig = px.bar(df_compare, x="Strategy", y="Final Net Worth", text_auto=".2s")
+            st.plotly_chart(fig, use_container_width=True)
+
+            st.subheader("📈 Loan Clearance Timeline")
+            fig2 = px.bar(df_compare, x="Strategy", y="Loan Cleared In (Months)", text_auto=True)
+            st.plotly_chart(fig2, use_container_width=True)
+
+            # ---------------- SMART RECOMMENDATION ----------------
+            st.subheader("🧠 Smart Recommendation")
+
+            try:
+                df_numeric = df_compare.copy()
+                df_numeric["Final Net Worth"] = pd.to_numeric(df_numeric["Final Net Worth"], errors="coerce")
+                df_numeric["Final Investment Balance"] = pd.to_numeric(df_numeric["Final Investment Balance"], errors="coerce")
+
+                # Best Net Worth Strategy
+                best_net_worth_row = df_numeric.loc[df_numeric["Final Net Worth"].idxmax()]
+                strategy_net = best_net_worth_row["Strategy"]
+                net_value = best_net_worth_row["Final Net Worth"]
+
+                # Fastest Loan Clearance Strategy
+                loan_filtered = df_numeric[df_numeric["Loan Cleared In (Months)"] != "Not Cleared"]
+                if not loan_filtered.empty:
+                    loan_filtered["Loan Cleared In (Months)"] = pd.to_numeric(loan_filtered["Loan Cleared In (Months)"], errors="coerce")
+                    fastest_loan_row = loan_filtered.loc[loan_filtered["Loan Cleared In (Months)"].idxmin()]
+                    strategy_loan = fastest_loan_row["Strategy"]
+                    loan_months = fastest_loan_row["Loan Cleared In (Months)"]
+                else:
+                    strategy_loan = "N/A"
+                    loan_months = "No strategy cleared the loan"
+
+                st.markdown(f"""
+- 🥇 **Highest Net Worth**: Strategy **{strategy_net}** with ₹{net_value:,.0f}  
+- ⏱️ **Fastest Loan Payoff**: Strategy **{strategy_loan}** in **{loan_months} months**
+                """)
+
+            except Exception as e:
+                st.error(f"Smart recommendation failed: {e}")
+
 
 # -------------------- STRATEGY G – MONTE CARLO --------------------
 elif tabs == "📊 Strategy G (Monte Carlo)":
