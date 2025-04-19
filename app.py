@@ -11,7 +11,7 @@ tabs = st.sidebar.radio("Go to:", [
     "🏠 Home", 
     "🏃‍♂️ Run Simulation", 
     "📈 Strategy Comparison", 
-    "📊 Strategy G (Monte Carlo)", 
+    "📊 Monte Carlo", 
     "🔍 Optimization Explorer", 
     "ℹ️ About"
 ])
@@ -118,7 +118,6 @@ Use the navigation sidebar to begin your simulation.
 - **🔸 Strategy D – Invest First, Then Aggressive:** Invest during moratorium, then repay loan aggressively.
 - **🟢 Strategy E – Dynamic Allocation:** Repay until X% loan cleared, then invest fully.
 - **🟠 Strategy F – Risk-Aware:** Allocation varies monthly based on job security or investment volatility.
-- **🟣 Strategy G – Random Split Simulation:** Each month, the savings split between investment and repayment is randomized. This allows users to explore how unpredictable behavior might impact final outcomes.
         """)
 
     st.subheader("🧪 Scenario Engine")
@@ -238,8 +237,8 @@ elif tabs == "📈 Strategy Comparison":
 
 
 # -------------------- STRATEGY G – MONTE CARLO --------------------
-elif tabs == "📊 Strategy G (Monte Carlo)":
-    st.header("🎲 Monte Carlo Simulation – Strategy G")
+elif tabs == "📊 Monte Carlo":
+    st.header("🎲 Monte Carlo Simulation")
     st.markdown("""
 Run Strategy G multiple times with randomized savings allocation to analyze the range of possible financial outcomes.
 """)
