@@ -11,16 +11,37 @@ def apply_tax(value, annual_tax_rate):
 
 def simulate_strategy(params):
     months = params['years'] * 12
-    monthly_savings_usd = calculate_monthly_savings(
-        params['gross_annual_salary_usd'],
-        params['us_tax_rate'],
-        params['monthly_expenses_usd']
-    )
-    monthly_savings_inr = monthly_savings_usd * params['usd_to_inr_rate']
+    # Job Loss Scenario Control
+    job_loss_enabled = params.get("enable_job_loss", False)
+    if job_loss_enabled:
+        job_loss_start = params.get("job_loss_start", 0)
+        job_loss_end = job_loss_start + params.get("job_loss_duration", 0)
+        income_recovery = params.get("income_recovery_rate", 0) / 100
+# Apply currency fluctuation
+if params.get("enable_fx_drift"):
+    fx_rate *= (1 + params["fx_drift_rate"] / 12)
+
+# Apply inflation to expenses
+if params.get("enable_inflation"):
+    expenses *= (1 + params["inflation_rate"] / 12)
+
+# Apply job loss
+if job_loss_enabled and job_loss_start <= month <= job_loss_end:
+    effective_salary = params["gross_annual_salary_usd"] * income_recovery
+else:
+    effective_salary = params["gross_annual_salary_usd"]
+
+# Recalculate monthly savings
+monthly_income = (effective_salary / 12) * (1 - params["us_tax_rate"])
+monthly_savings_usd = monthly_income - expenses
+monthly_savings_inr = monthly_savings_usd * fx_rate
     
     investment_balance = 0
     loan_balance = params['loan_amount_inr']
     emi = params['emi_inr']
+
+    fx_rate = params["usd_to_inr_rate"]
+    expenses = params["monthly_expenses_usd"]
 
     results = []
 
